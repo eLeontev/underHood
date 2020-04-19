@@ -15,5 +15,10 @@
     "bugs": {
         "url": "https://github.com/eLeontev/underHood/issues"
     },
-    "homepage": "https://github.com/eLeontev/underHood#readme"
+    "homepage": "https://github.com/eLeontev/underHood#readme",
+    "devDependencies": {
+        "@babel/preset-env": "^7.9.5",
+        "@babel/preset-typescript": "^7.9.0",
+        "jest": "^25.3.0"
+    }
 }
