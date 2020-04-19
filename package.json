@@ -1,0 +1,19 @@
+{
+    "name": "under-hood",
+    "version": "1.0.0",
+    "description": "the repo demonstrates core concepts of modern/popular JS libraries",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/eLeontev/underHood.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/eLeontev/underHood/issues"
+    },
+    "homepage": "https://github.com/eLeontev/underHood#readme"
+}
