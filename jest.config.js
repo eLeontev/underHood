@@ -5,5 +5,4 @@ module.exports = {
     transform: {
         '^.+\\.ts?$': 'babel-jest',
     },
-    moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts'],
 };
