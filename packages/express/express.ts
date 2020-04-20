@@ -82,8 +82,6 @@ class App implements Express {
     }
 }
 
-const express: () => Express = () => {
+export const express: () => Express = () => {
     return new App();
 };
-
-export { express };
