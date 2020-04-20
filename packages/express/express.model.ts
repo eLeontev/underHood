@@ -12,9 +12,38 @@ export type MiddleWareListener = (
     next: Next
 ) => void;
 
-export interface Express {
-    listen(port: number): void;
-    get(route: string, routeListener: RouteListener): void;
-    post(route: string, routeListener: RouteListener): void;
-    use(route: string, middleWareListener, MiddleWareListener): void;
+interface RouteListeners {
+    [url: string]: RouteListener;
 }
+
+interface MiddleWawreListeners {
+    [url: string]: Array<MiddleWareListener>;
+}
+
+export enum methods {
+    GET = 'GET',
+    POST = 'POST',
+    MIDDLEWARE = 'MIDDLEWARE',
+}
+export interface Routes {
+    [methods.GET]: RouteListeners;
+    [methods.POST]: RouteListeners;
+    [methods.MIDDLEWARE]: MiddleWawreListeners;
+}
+interface Express {
+    listen(port: number): void;
+    get(url: string, routeListener: RouteListener): void;
+    post(url: string, routeListener: RouteListener): void;
+    use(url: string, middlewareListener, MiddleWareListener): void;
+}
+
+interface Express {
+    performRequestLogic(
+        method: methods.GET | methods.POST,
+        url: string,
+        request: Request,
+        response: Response
+    ): void;
+}
+
+export { Express };
