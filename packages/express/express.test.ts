@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any */
+
 import { express } from './express';
 import { methods } from './express.model';
 

@@ -6,5 +6,7 @@ install:
     - npm install
 jobs:
     include:
+        - stage: validate
+          script: npm run validate
         - stage: test
           script: npm run test
