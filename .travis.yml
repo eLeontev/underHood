@@ -7,4 +7,5 @@ install:
 jobs:
     include:
         - stage: test
+          script: npm run validate
           script: npm run test
