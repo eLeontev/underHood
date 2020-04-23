@@ -4,15 +4,13 @@ import { Callback, DescribeModel, DescribeCore } from './jasmine.model';
 import { Describers, NextDescriberArguments } from './describe.model';
 
 export class Describe implements DescribeCore {
-    private uniqueid: () => string;
     private entryDescriberId: string;
     private describerId: string;
     private describers: Describers = {};
 
-    private nextDescriberArguments: NextDescriberArguments;
+    private nextDescriberArguments: Array<NextDescriberArguments> = [];
 
     constructor() {
-        this.uniqueid = uniqueid;
         this.entryDescriberId = uniqueid();
         this.describerId = this.entryDescriberId;
     }
@@ -22,7 +20,10 @@ export class Describe implements DescribeCore {
         callback: Callback
     ): void => {
         if (this.hasProcessedDesribe()) {
-            this.nextDescriberArguments = { description, callback };
+            this.nextDescriberArguments = [
+                ...this.nextDescriberArguments,
+                { description, callback },
+            ];
             return;
         }
 
@@ -56,28 +57,31 @@ export class Describe implements DescribeCore {
         const isParentDescribeNotFormed = !describers[describerId]
             .childrenDescriberId;
 
-        return !isNotRootDescribe && isParentDescribeNotFormed;
+        return isNotRootDescribe && isParentDescribeNotFormed;
     }
 
     private completeDesribeForming(): void {
         const { describers, describerId } = this;
-        this.generateChildrenEntryDescriptionId();
+        this.generateChildrenEntryDescriberId();
 
         describers[describerId].childrenDescriberId = this.describerId;
     }
 
     private performNextDescribe(): void {
-        if (!this.nextDescriberArguments) {
+        if (!this.nextDescriberArguments.length) {
             return;
         }
 
-        const { description, callback } = this.nextDescriberArguments;
-        this.nextDescriberArguments = null;
+        const [nextArguments] = this.nextDescriberArguments;
+        this.nextDescriberArguments = this.nextDescriberArguments.filter(
+            (args) => args !== nextArguments
+        );
 
+        const { description, callback } = nextArguments;
         this.describe(description, callback);
     }
 
-    private generateChildrenEntryDescriptionId(): void {
+    private generateChildrenEntryDescriberId(): void {
         this.describerId = uniqueid();
     }
 }
