@@ -1,25 +1,40 @@
 import uniqueid from 'lodash.uniqueid';
 
 import { Callback, DescribeModel, DescribeCore } from './jasmine.model';
-import { Describers, NextDescriberArguments } from './describe.model';
+import {
+    Describers,
+    NextDescriberArguments,
+    Describer,
+} from './describe.model';
 
 export class Describe implements DescribeCore {
-    private entryDescriberId: string;
-    private describerId: string;
+    private isDescriberFormingCompleted = true;
     private describers: Describers = {};
+    private rooDescribersId: Array<string> = [];
 
     private nextDescriberArguments: Array<NextDescriberArguments> = [];
-
-    constructor() {
-        this.entryDescriberId = uniqueid();
-        this.describerId = this.entryDescriberId;
-    }
 
     public describe: DescribeModel = (
         description: string,
         callback: Callback
     ): void => {
-        if (this.hasProcessedDesribe()) {
+        this.describeHandler(description, callback);
+    };
+
+    private childDescribe(
+        description: string,
+        callback: Callback,
+        describerId: string
+    ): void {
+        this.describeHandler(description, callback, describerId);
+    }
+
+    private describeHandler(
+        description: string,
+        callback: Callback,
+        describerId?: string
+    ): void {
+        if (!this.isDescriberFormingCompleted) {
             this.nextDescriberArguments = [
                 ...this.nextDescriberArguments,
                 { description, callback },
@@ -27,61 +42,68 @@ export class Describe implements DescribeCore {
             return;
         }
 
-        this.initDescribe(description);
+        const describer = this.initDescribe(description);
 
+        this.isDescriberFormingCompleted = false;
         callback();
 
-        this.completeDesribeForming();
-        this.performNextDescribe();
-    };
+        this.isDescriberFormingCompleted = true;
+        this.performChildrenDescribers(describer, describerId);
+    }
 
-    private initDescribe(description: string): void {
-        const { describerId } = this;
-
-        this.describers = {
-            ...this.describers,
-            [describerId]: {
-                description,
-                beforeEachList: [],
-                itList: [],
-                childrenDescriberId: null,
-                context: {},
-            },
+    private initDescribe(description: string): Describer {
+        return {
+            description,
+            beforeEachList: [],
+            itList: [],
+            childrenDescribersId: [],
+            context: {},
         };
     }
 
-    private hasProcessedDesribe(): boolean {
-        const { describers, describerId, entryDescriberId } = this;
+    private performChildrenDescribers(
+        describer: Describer,
+        describerId: string
+    ): void {
+        const nextDescriberArguments = [...this.nextDescriberArguments];
+        this.nextDescriberArguments = [];
 
-        const isNotRootDescribe = describerId !== entryDescriberId;
-        const isParentDescribeNotFormed = !describers[describerId]
-            .childrenDescriberId;
+        nextDescriberArguments.forEach(
+            ({ description, callback }: NextDescriberArguments) => {
+                const childrenDescriberId = uniqueid('child-');
 
-        return isNotRootDescribe && isParentDescribeNotFormed;
-    }
-
-    private completeDesribeForming(): void {
-        const { describers, describerId } = this;
-        this.generateChildrenEntryDescriberId();
-
-        describers[describerId].childrenDescriberId = this.describerId;
-    }
-
-    private performNextDescribe(): void {
-        if (!this.nextDescriberArguments.length) {
-            return;
-        }
-
-        const [nextArguments] = this.nextDescriberArguments;
-        this.nextDescriberArguments = this.nextDescriberArguments.filter(
-            (args) => args !== nextArguments
+                this.addChildrenDesriberId(describer, childrenDescriberId);
+                this.childDescribe(description, callback, childrenDescriberId);
+            }
         );
 
-        const { description, callback } = nextArguments;
-        this.describe(description, callback);
+        this.setFormedDescriber(describer, describerId);
     }
 
-    private generateChildrenEntryDescriberId(): void {
-        this.describerId = uniqueid();
+    private setFormedDescriber(
+        describer: Describer,
+        describerId: string
+    ): void {
+        let id = describerId;
+
+        if (!id) {
+            id = uniqueid('root-');
+            this.rooDescribersId = [...this.rooDescribersId, id];
+        }
+
+        this.describers = {
+            ...this.describers,
+            [id]: describer,
+        };
+    }
+
+    private addChildrenDesriberId(
+        describer: Describer,
+        childrenDescriberId: string
+    ): void {
+        describer.childrenDescribersId = [
+            ...describer.childrenDescribersId,
+            childrenDescriberId,
+        ];
     }
 }

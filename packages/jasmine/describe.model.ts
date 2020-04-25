@@ -1,9 +1,9 @@
 import { CallbackList, Callback } from './jasmine.model';
 
-interface Describer {
+export interface Describer {
     description: string;
     beforeEachList: CallbackList;
-    childrenDescriberId: string;
+    childrenDescribersId: Array<string>;
     itList: CallbackList;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: any;
