@@ -8,6 +8,7 @@ import {
 } from './describe.model';
 
 export class Describe implements DescribeCore {
+    private activeDescriberId: string;
     private isDescriberFormingInProgress = false;
     private describers: Describers = {};
     private rootDescribersId: Array<string> = [];
@@ -43,13 +44,23 @@ export class Describe implements DescribeCore {
             return;
         }
 
-        const id = this.initDescribe(description, describerId);
+        this.beforeCallbackCall(description, describerId);
+        callback.call(this);
+        this.afterCallbackCall();
+    }
 
+    private beforeCallbackCall(description: string, describerId: string): void {
+        this.activeDescriberId = this.initDescribe(description, describerId);
         this.isDescriberFormingInProgress = true;
-        callback();
+    }
+
+    private afterCallbackCall(): void {
+        const { activeDescriberId } = this;
+
+        this.activeDescriberId = null;
         this.isDescriberFormingInProgress = false;
 
-        this.performChildrenDescribers(id);
+        this.performChildrenDescribers(activeDescriberId);
     }
 
     private initDescribe(description: string, describerId?: string): string {
