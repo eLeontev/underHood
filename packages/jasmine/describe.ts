@@ -8,9 +8,9 @@ import {
 } from './describe.model';
 
 export class Describe implements DescribeCore {
-    private isDescriberFormingCompleted = true;
+    private isDescriberFormingInProgress = false;
     private describers: Describers = {};
-    private rooDescribersId: Array<string> = [];
+    private rootDescribersId: Array<string> = [];
 
     private nextDescriberArguments: Array<NextDescriberArguments> = [];
 
@@ -34,20 +34,21 @@ export class Describe implements DescribeCore {
         callback: Callback,
         describerId?: string
     ): void {
-        if (!this.isDescriberFormingCompleted) {
+        if (this.isDescriberFormingInProgress) {
             this.nextDescriberArguments = [
                 ...this.nextDescriberArguments,
                 { description, callback },
             ];
+
             return;
         }
 
         const describer = this.initDescribe(description);
 
-        this.isDescriberFormingCompleted = false;
+        this.isDescriberFormingInProgress = true;
         callback();
+        this.isDescriberFormingInProgress = false;
 
-        this.isDescriberFormingCompleted = true;
         this.performChildrenDescribers(describer, describerId);
     }
 
@@ -88,7 +89,7 @@ export class Describe implements DescribeCore {
 
         if (!id) {
             id = uniqueid('root-');
-            this.rooDescribersId = [...this.rooDescribersId, id];
+            this.rootDescribersId = [...this.rootDescribersId, id];
         }
 
         this.describers = {

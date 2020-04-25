@@ -65,7 +65,7 @@ describe('Integration tests: Describe', () => {
     });
 
     it('should collect root describers id in separate list', () => {
-        expect(instance.rooDescribersId).toEqual(['root-4', 'root-6']);
+        expect(instance.rootDescribersId).toEqual(['root-4', 'root-6']);
     });
 
     it('should link children describers in parent', () => {
