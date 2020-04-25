@@ -71,10 +71,10 @@ export class Describe implements DescribeCore {
 
         nextDescriberArguments.forEach(
             ({ description, callback }: NextDescriberArguments) => {
-                const childrenDescriberId = uniqueid('child-');
+                const childDescriberId = uniqueid('child-');
 
-                this.addChildrenDesriberId(describer, childrenDescriberId);
-                this.childDescribe(description, callback, childrenDescriberId);
+                this.addChildDesriberId(describer, childDescriberId);
+                this.childDescribe(description, callback, childDescriberId);
             }
         );
 
@@ -98,13 +98,13 @@ export class Describe implements DescribeCore {
         };
     }
 
-    private addChildrenDesriberId(
+    private addChildDesriberId(
         describer: Describer,
-        childrenDescriberId: string
+        childDescriberId: string
     ): void {
         describer.childrenDescribersId = [
             ...describer.childrenDescribersId,
-            childrenDescriberId,
+            childDescriberId,
         ];
     }
 }
