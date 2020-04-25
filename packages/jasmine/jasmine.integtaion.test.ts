@@ -18,69 +18,70 @@ instance.describe('root_02', () => {
 
 describe('Integration tests: Describe', () => {
     it('should form valid relationship structure of describers', () => {
+        debugger;
         expect(instance.describers).toEqual({
+            'root-1': {
+                description: 'root_01',
+                beforeEachList: [],
+                itList: [],
+                childrenDescribersId: ['child-2', 'child-4'],
+                context: {},
+            },
             'child-2': {
+                description: 'child_01_01',
+                beforeEachList: [],
+                itList: [],
+                childrenDescribersId: ['child-3'],
+                context: {},
+            },
+            'child-3': {
                 description: 'child_01_01_01',
                 beforeEachList: [],
                 itList: [],
                 childrenDescribersId: [],
                 context: {},
             },
-            'child-1': {
-                description: 'child_01_01',
-                beforeEachList: [],
-                itList: [],
-                childrenDescribersId: ['child-2'],
-                context: {},
-            },
-            'child-3': {
+            'child-4': {
                 description: 'child_01_02',
                 beforeEachList: [],
                 itList: [],
                 childrenDescribersId: [],
                 context: {},
             },
-            'root-4': {
-                description: 'root_01',
+            'root-5': {
+                description: 'root_02',
                 beforeEachList: [],
                 itList: [],
-                childrenDescribersId: ['child-1', 'child-3'],
+                childrenDescribersId: ['child-6'],
                 context: {},
             },
-            'child-5': {
+            'child-6': {
                 description: 'child_02_01',
                 beforeEachList: [],
                 itList: [],
                 childrenDescribersId: [],
                 context: {},
             },
-            'root-6': {
-                description: 'root_02',
-                beforeEachList: [],
-                itList: [],
-                childrenDescribersId: ['child-5'],
-                context: {},
-            },
         });
     });
 
     it('should collect root describers id in separate list', () => {
-        expect(instance.rootDescribersId).toEqual(['root-4', 'root-6']);
+        expect(instance.rootDescribersId).toEqual(['root-1', 'root-5']);
     });
 
     it('should link children describers in parent', () => {
-        expect(instance.describers['root-4'].childrenDescribersId).toEqual([
-            'child-1',
+        expect(instance.describers['root-1'].childrenDescribersId).toEqual([
+            'child-2',
+            'child-4',
+        ]);
+        expect(instance.describers['root-5'].childrenDescribersId).toEqual([
+            'child-6',
+        ]);
+        expect(instance.describers['child-2'].childrenDescribersId).toEqual([
             'child-3',
         ]);
-        expect(instance.describers['root-6'].childrenDescribersId).toEqual([
-            'child-5',
-        ]);
-        expect(instance.describers['child-1'].childrenDescribersId).toEqual([
-            'child-2',
-        ]);
-        expect(instance.describers['child-2'].childrenDescribersId).toEqual([]);
         expect(instance.describers['child-3'].childrenDescribersId).toEqual([]);
-        expect(instance.describers['child-5'].childrenDescribersId).toEqual([]);
+        expect(instance.describers['child-4'].childrenDescribersId).toEqual([]);
+        expect(instance.describers['child-6'].childrenDescribersId).toEqual([]);
     });
 });
