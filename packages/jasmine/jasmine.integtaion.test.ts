@@ -1,28 +1,46 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function */
 
-import { Describe } from './describe';
+import { Jasmine } from './jasmine';
 
-const instance: any = new Describe();
+const instance: any = new Jasmine();
+
+const bfeCallbackFirst = () => {};
+const bfeCallbackSecond = () => {};
+const bfeCallbackThird = () => {};
+
+const afeCallbackFirst = () => {};
+const afeCallbackSecond = () => {};
+const afeCallbackThird = () => {};
 
 instance.describe('root_01', () => {
+    instance.beforeEach(bfeCallbackFirst);
+
     instance.describe('child_01_01', () => {
-        instance.describe('child_01_01_01', Function);
+        instance.afterEach(afeCallbackFirst);
+
+        instance.describe('child_01_01_01', () => {
+            instance.beforeEach(bfeCallbackThird);
+            instance.afterEach(afeCallbackSecond);
+        });
     });
 
+    instance.beforeEach(bfeCallbackSecond);
     instance.describe('child_01_02', Function);
 });
 
 instance.describe('root_02', () => {
-    instance.describe('child_02_01', Function);
+    instance.describe('child_02_01', () => {
+        instance.afterEach(afeCallbackThird);
+    });
 });
 
 describe('Integration tests: Describe', () => {
     it('should form valid relationship structure of describers', () => {
-        debugger;
         expect(instance.describers).toEqual({
             'root-1': {
                 description: 'root_01',
-                beforeEachList: [],
+                beforeEachList: [bfeCallbackFirst, bfeCallbackSecond],
+                afterEachList: [],
                 itList: [],
                 childrenDescribersId: ['child-2', 'child-4'],
                 context: {},
@@ -30,13 +48,15 @@ describe('Integration tests: Describe', () => {
             'child-2': {
                 description: 'child_01_01',
                 beforeEachList: [],
+                afterEachList: [afeCallbackFirst],
                 itList: [],
                 childrenDescribersId: ['child-3'],
                 context: {},
             },
             'child-3': {
                 description: 'child_01_01_01',
-                beforeEachList: [],
+                beforeEachList: [bfeCallbackThird],
+                afterEachList: [afeCallbackSecond],
                 itList: [],
                 childrenDescribersId: [],
                 context: {},
@@ -44,6 +64,7 @@ describe('Integration tests: Describe', () => {
             'child-4': {
                 description: 'child_01_02',
                 beforeEachList: [],
+                afterEachList: [],
                 itList: [],
                 childrenDescribersId: [],
                 context: {},
@@ -51,6 +72,7 @@ describe('Integration tests: Describe', () => {
             'root-5': {
                 description: 'root_02',
                 beforeEachList: [],
+                afterEachList: [],
                 itList: [],
                 childrenDescribersId: ['child-6'],
                 context: {},
@@ -58,6 +80,7 @@ describe('Integration tests: Describe', () => {
             'child-6': {
                 description: 'child_02_01',
                 beforeEachList: [],
+                afterEachList: [afeCallbackThird],
                 itList: [],
                 childrenDescribersId: [],
                 context: {},

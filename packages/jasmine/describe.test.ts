@@ -137,6 +137,7 @@ describe('Describe', () => {
                 {
                     description,
                     beforeEachList: [],
+                    afterEachList: [],
                     itList: [],
                     childrenDescribersId: [],
                     context: {},
@@ -152,6 +153,7 @@ describe('Describe', () => {
                 {
                     description,
                     beforeEachList: [],
+                    afterEachList: [],
                     itList: [],
                     childrenDescribersId: [],
                     context: {},

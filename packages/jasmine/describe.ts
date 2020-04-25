@@ -1,6 +1,6 @@
 import uniqueid from 'lodash.uniqueid';
 
-import { Callback, DescribeModel, DescribeCore } from './jasmine.model';
+import { Callback, DescribeCore } from './jasmine.model';
 import {
     Describers,
     NextDescriberArguments,
@@ -15,12 +15,9 @@ export class Describe implements DescribeCore {
 
     private nextDescriberArguments: Array<NextDescriberArguments> = [];
 
-    public describe: DescribeModel = (
-        description: string,
-        callback: Callback
-    ): void => {
+    public describe(description: string, callback: Callback): void {
         this.describeHandler(description, callback);
-    };
+    }
 
     private childDescribe(
         description: string,
@@ -65,9 +62,10 @@ export class Describe implements DescribeCore {
 
     private initDescribe(description: string, describerId?: string): string {
         const id = describerId || uniqueid('root-');
-        const describer = {
+        const describer: Describer = {
             description,
             beforeEachList: [],
+            afterEachList: [],
             itList: [],
             childrenDescribersId: [],
             context: {},
@@ -118,5 +116,19 @@ export class Describe implements DescribeCore {
             ...describer.childrenDescribersId,
             childDescriberId,
         ];
+    }
+
+    public getMethods(): any {
+        return {
+            addChildDesriberId: this.addChildDesriberId,
+            setFormedDescriber: this.setFormedDescriber,
+            performChildrenDescribers: this.performChildrenDescribers,
+            initDescribe: this.initDescribe,
+            afterCallbackCall: this.afterCallbackCall,
+            beforeCallbackCall: this.beforeCallbackCall,
+            describeHandler: this.describeHandler,
+            childDescribe: this.childDescribe,
+            describe: this.describe,
+        };
     }
 }
