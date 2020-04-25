@@ -14,7 +14,12 @@ export interface DescribeCore {
     describe: DescribeModel;
 }
 
-export type JasmineCore = DescribeCore;
+export type BeforeAfterEachModel = (callback: Callback) => void;
+export interface BeforeAfterEachCore {
+    beforeEach: BeforeAfterEachModel;
+    afterEach: BeforeAfterEachModel;
+}
+
+export type JasmineCore = DescribeCore & BeforeAfterEachCore;
 // it(description: string, callback: Callback);
-// beforeEach(description: string, callback: Callback);
 // expect<EntityToValidate>(entityToValidate: EntityToValidate): Matchers;
