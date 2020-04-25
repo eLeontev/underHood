@@ -43,29 +43,32 @@ export class Describe implements DescribeCore {
             return;
         }
 
-        const describer = this.initDescribe(description);
+        const id = this.initDescribe(description, describerId);
 
         this.isDescriberFormingInProgress = true;
         callback();
         this.isDescriberFormingInProgress = false;
 
-        this.performChildrenDescribers(describer, describerId);
+        this.performChildrenDescribers(id);
     }
 
-    private initDescribe(description: string): Describer {
-        return {
+    private initDescribe(description: string, describerId?: string): string {
+        const id = describerId || uniqueid('root-');
+        const describer = {
             description,
             beforeEachList: [],
             itList: [],
             childrenDescribersId: [],
             context: {},
         };
+
+        const isRootDescriber = !describerId;
+        this.setFormedDescriber(describer, id, isRootDescriber);
+
+        return id;
     }
 
-    private performChildrenDescribers(
-        describer: Describer,
-        describerId: string
-    ): void {
+    private performChildrenDescribers(describerId: string): void {
         const nextDescriberArguments = [...this.nextDescriberArguments];
         this.nextDescriberArguments = [];
 
@@ -73,35 +76,33 @@ export class Describe implements DescribeCore {
             ({ description, callback }: NextDescriberArguments) => {
                 const childDescriberId = uniqueid('child-');
 
-                this.addChildDesriberId(describer, childDescriberId);
+                this.addChildDesriberId(describerId, childDescriberId);
                 this.childDescribe(description, callback, childDescriberId);
             }
         );
-
-        this.setFormedDescriber(describer, describerId);
     }
 
     private setFormedDescriber(
         describer: Describer,
-        describerId: string
+        describerId: string,
+        isRootDescriber: boolean
     ): void {
-        let id = describerId;
-
-        if (!id) {
-            id = uniqueid('root-');
-            this.rootDescribersId = [...this.rootDescribersId, id];
+        if (isRootDescriber) {
+            this.rootDescribersId = [...this.rootDescribersId, describerId];
         }
 
         this.describers = {
             ...this.describers,
-            [id]: describer,
+            [describerId]: describer,
         };
     }
 
     private addChildDesriberId(
-        describer: Describer,
+        describerId: string,
         childDescriberId: string
     ): void {
+        const describer = this.describers[describerId];
+
         describer.childrenDescribersId = [
             ...describer.childrenDescribersId,
             childDescriberId,
