@@ -45,7 +45,7 @@ export class Describe implements DescribeCore {
         }
 
         this.beforeCallbackCall(description, describerId);
-        callback.call(this);
+        callback();
         this.afterCallbackCall();
     }
 

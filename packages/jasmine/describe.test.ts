@@ -71,13 +71,6 @@ describe('Describe', () => {
             ]);
         });
 
-        it('should  call callback with saving of context', () => {
-            callback.mockImplementation(function () {
-                expect(this).toBe(instance);
-            });
-            instance.describeHandler(description, callback);
-        });
-
         it('should call before/after methods to hande callback with valid state', () => {
             instance.beforeCallbackCall.mockImplementation(() => {
                 expect(callback).not.toHaveBeenCalled();
