@@ -9,6 +9,7 @@ describe('Describe', () => {
 
     const description = 'description';
     const describerId = 'describerId';
+    const activeDescriberId = 'activeDescriberId';
 
     beforeEach(() => {
         instance = new Describe();
@@ -56,6 +57,8 @@ describe('Describe', () => {
             instance.initDescribe = jest.fn();
             instance.isDescriberFormingInProgress = false;
             instance.performChildrenDescribers = jest.fn();
+            instance.beforeCallbackCall = jest.fn();
+            instance.afterCallbackCall = jest.fn();
         });
 
         it('should store passed description and callback if previous description forming not completed yet', () => {
@@ -68,43 +71,64 @@ describe('Describe', () => {
             ]);
         });
 
-        it('should init describer with passed desription and undefined if descrriberId is not passed', () => {
+        it('should  call callback with saving of context', () => {
+            callback.mockImplementation(function () {
+                expect(this).toBe(instance);
+            });
             instance.describeHandler(description, callback);
-            expect(instance.initDescribe).toHaveBeenCalledWith(
-                description,
-                undefined
-            );
         });
 
-        it('should init describer with passed desription and descrriberId if it is passed', () => {
+        it('should call before/after methods to hande callback with valid state', () => {
+            instance.beforeCallbackCall.mockImplementation(() => {
+                expect(callback).not.toHaveBeenCalled();
+                expect(instance.afterCallbackCall).not.toHaveBeenCalled();
+            });
+            callback.mockImplementation(() => {
+                expect(instance.afterCallbackCall).not.toHaveBeenCalled();
+            });
+
             instance.describeHandler(description, callback, describerId);
-            expect(instance.initDescribe).toHaveBeenCalledWith(
+
+            expect(callback).toHaveBeenCalled();
+            expect(instance.afterCallbackCall).toHaveBeenCalled();
+            expect(instance.beforeCallbackCall).toHaveBeenLastCalledWith(
                 description,
                 describerId
             );
         });
+    });
 
-        it('should call callback with specific isDescriberFormingInProgress flag to postpone call of children describers', () => {
-            callback.mockImplementation(() =>
-                expect(instance.isDescriberFormingInProgress).toBeTruthy()
-            );
-            instance.describeHandler(description, callback);
-            expect(callback).toHaveBeenCalled();
+    describe('#beforeCallbackCall', () => {
+        beforeEach(() => {
+            instance.initDescribe = jest
+                .fn()
+                .mockReturnValue(activeDescriberId);
         });
 
-        it('should call #performChildrenDescribers with cleared specific isDescriberFormingInProgress to enable their calls', () => {
-            instance.performChildrenDescribers.mockImplementation(() =>
-                expect(instance.isDescriberFormingInProgress).toBeFalsy()
-            );
-            instance.describeHandler(description, callback);
-            expect(instance.performChildrenDescribers).toHaveBeenCalled();
+        it('should init describer and set its id as active describerId', () => {
+            instance.beforeCallbackCall(description, describerId);
+            expect(instance.activeDescriberId).toBe(activeDescriberId);
+            expect(instance.isDescriberFormingInProgress).toBeTruthy();
+        });
+    });
+
+    describe('#afterCallbackCall', () => {
+        beforeEach(() => {
+            instance.performChildrenDescribers = jest.fn();
+            instance.activeDescriberId = activeDescriberId;
+            instance.isDescriberFormingInProgress = true;
         });
 
-        it('should call #performChildrenDescribers with formed parent describer and describerId if parent describer is not root', () => {
-            instance.initDescribe.mockReturnValue(describerId);
-            instance.describeHandler(description, callback);
+        it('should clean up acitve describerId and mark forming describer completed', () => {
+            instance.afterCallbackCall();
+            expect(instance.activeDescriberId).toBeNull();
+            expect(instance.isDescriberFormingInProgress).toBeFalsy();
+        });
+
+        it('should perfrom children describers with passed active describerId', () => {
+            instance.afterCallbackCall();
             expect(instance.performChildrenDescribers).toHaveBeenCalledWith(
-                describerId
+                activeDescriberId
             );
         });
     });
