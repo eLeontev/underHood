@@ -8,5 +8,5 @@ jobs:
     include:
         - stage: validate
           script: npm run validate
-        - stage: test
+        - stage: test:ci
           script: npm run test

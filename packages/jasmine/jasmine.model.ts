@@ -5,7 +5,11 @@ export interface Matchers {
     toBeTruthy(): boolean;
 }
 
-export type DescribeModel = (description: string, callback: Callback) => void;
+export type DescribeModel = (
+    description: string,
+    callback: Callback,
+    parentDescriberId?: string
+) => void;
 export interface DescribeCore {
     describe: DescribeModel;
 }
