@@ -5,6 +5,7 @@ import {
     Describers,
     NextDescriberArguments,
     Describer,
+    InnerMethods,
 } from './describe.model';
 
 export class Describe implements DescribeCore {
@@ -118,7 +119,7 @@ export class Describe implements DescribeCore {
         ];
     }
 
-    public getMethods(): any {
+    public getMethods(): InnerMethods {
         return {
             addChildDesriberId: this.addChildDesriberId,
             setFormedDescriber: this.setFormedDescriber,

@@ -2,22 +2,24 @@ import {
     JasmineCore,
     DescribeModel,
     BeforeAfterEachModel,
+    ItModel,
 } from './jasmine.model';
 import { Describe } from './describe';
-import { BeforeAfterEach } from './before-after.each';
+import { InnerDescribeMethods } from './inner-describe.methods';
 
 export class Jasmine implements JasmineCore {
     public describe: DescribeModel;
 
     public beforeEach: BeforeAfterEachModel;
     public afterEach: BeforeAfterEachModel;
+    public it: ItModel;
 
     constructor() {
         const describeInstance = new Describe();
-        const beforeAfterEachInstance = new BeforeAfterEach();
+        const innerDescribeMethodsInstance = new InnerDescribeMethods();
 
-        this.setProperties(describeInstance, beforeAfterEachInstance);
-        this.setMethods(describeInstance, beforeAfterEachInstance);
+        this.setProperties(describeInstance, innerDescribeMethodsInstance);
+        this.setMethods(describeInstance, innerDescribeMethodsInstance);
 
         this.bindPublicApi();
     }
@@ -25,27 +27,28 @@ export class Jasmine implements JasmineCore {
     private bindPublicApi(): void {
         this.afterEach = this.afterEach.bind(this);
         this.beforeEach = this.beforeEach.bind(this);
+        this.it = this.it.bind(this);
+
         this.describe = this.describe.bind(this);
     }
 
     private setMethods(
         describeInstance: Describe,
-        beforeAfterEachInstance: BeforeAfterEach
+        innerDescribeMethodsInstance: InnerDescribeMethods
     ): void {
         Object.assign(
             this,
             describeInstance.getMethods(),
-            beforeAfterEachInstance.getMethods()
+            innerDescribeMethodsInstance.getMethods()
         );
     }
 
     private setProperties(
         describeInstance: Describe,
-        beforeAfterEachInstance: BeforeAfterEach
+        innerDescribeMethodsInstance: InnerDescribeMethods
     ): void {
-        Object.assign(this, describeInstance, beforeAfterEachInstance);
+        Object.assign(this, describeInstance, innerDescribeMethodsInstance);
     }
 
     // expect() {}
-    // it() {}
 }
