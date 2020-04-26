@@ -1,7 +1,8 @@
-import { BeforeAfterEachCore, Callback } from './jasmine.model';
+import { InnerDescribeMethodsCore, Callback } from './jasmine.model';
 import { Describers, Describer } from './describe.model';
+import { InnerMethods } from './inner-describe.methods.model';
 
-export class BeforeAfterEach implements BeforeAfterEachCore {
+export class InnerDescribeMethods implements InnerDescribeMethodsCore {
     private describers: Describers = {};
     private activeDescriberId: string;
 
@@ -15,13 +16,19 @@ export class BeforeAfterEach implements BeforeAfterEachCore {
         describer.afterEachList = [...describer.afterEachList, callback];
     }
 
+    public it(description: string, callback: Callback): void {
+        const describer = this.getActiveDescriber();
+        describer.itList = [...describer.itList, { description, callback }];
+    }
+
     private getActiveDescriber(): Describer {
         const { activeDescriberId, describers } = this;
         return describers[activeDescriberId];
     }
 
-    public getMethods(): any {
+    public getMethods(): InnerMethods {
         return {
+            it: this.it,
             beforeEach: this.beforeEach,
             afterEach: this.afterEach,
             getActiveDescriber: this.getActiveDescriber,
