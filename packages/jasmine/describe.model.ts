@@ -1,15 +1,18 @@
 import { CallbackList, Callback, DescribeModel } from './jasmine.model';
+import { Validator } from './matcher.model';
 
 export interface It {
     description: string;
     callback: Callback;
 }
+
 export interface Describer {
     description: string;
     beforeEachList: CallbackList;
     afterEachList: CallbackList;
     childrenDescribersId: Array<string>;
     itList: Array<It>;
+    validators: Array<Validator>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: any;
 }
