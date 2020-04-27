@@ -60,6 +60,7 @@ describe('Integration tests: Describe', () => {
                     { description: 'it-1', callback: itCallbackFirst },
                     { description: 'it-2', callback: itCallbackSecond },
                 ],
+                validators: [],
                 childrenDescribersId: ['child-2', 'child-4'],
                 context: {},
             });
@@ -71,6 +72,7 @@ describe('Integration tests: Describe', () => {
                 beforeEachList: [],
                 afterEachList: [],
                 itList: [{ description: 'it-5', callback: itCallbackFifth }],
+                validators: [],
                 childrenDescribersId: ['child-6'],
                 context: {},
             });
@@ -82,6 +84,7 @@ describe('Integration tests: Describe', () => {
                 beforeEachList: [],
                 afterEachList: [afeCallbackFirst],
                 itList: [],
+                validators: [],
                 childrenDescribersId: ['child-3'],
                 context: {},
             });
@@ -93,6 +96,7 @@ describe('Integration tests: Describe', () => {
                 beforeEachList: [bfeCallbackThird],
                 afterEachList: [afeCallbackSecond],
                 itList: [{ description: 'it-3', callback: itCallbackThird }],
+                validators: [],
                 childrenDescribersId: [],
                 context: {},
             });
@@ -104,6 +108,7 @@ describe('Integration tests: Describe', () => {
                 beforeEachList: [],
                 afterEachList: [],
                 itList: [{ description: 'it-4', callback: itCallbackFourth }],
+                validators: [],
                 childrenDescribersId: [],
                 context: {},
             });
@@ -115,6 +120,7 @@ describe('Integration tests: Describe', () => {
                 beforeEachList: [],
                 afterEachList: [afeCallbackThird],
                 itList: [{ description: 'it-6', callback: itCallbackSixth }],
+                validators: [],
                 childrenDescribersId: [],
                 context: {},
             });

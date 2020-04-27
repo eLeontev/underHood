@@ -68,6 +68,7 @@ export class Describe implements DescribeCore {
             beforeEachList: [],
             afterEachList: [],
             itList: [],
+            validators: [],
             childrenDescribersId: [],
             context: {},
         };
