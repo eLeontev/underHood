@@ -16,13 +16,13 @@ export enum MatchersTypes {
 }
 
 export class Matchers implements MatchersCore {
-    constructor(private context: Validator) {}
+    constructor(private validator: Validator) {}
 
     public toBeFalsy(): void {
         this.setValidatorCallback(
             (): ValidatorResult => {
                 const {
-                    context: { expectedResult },
+                    validator: { expectedResult },
                 } = this;
 
                 const isSuccess = !expectedResult;
@@ -44,7 +44,7 @@ export class Matchers implements MatchersCore {
         this.setValidatorCallback(
             (): ValidatorResult => {
                 const {
-                    context: { expectedResult },
+                    validator: { expectedResult },
                 } = this;
                 const isSuccess = Boolean(expectedResult);
 
@@ -74,7 +74,7 @@ export class Matchers implements MatchersCore {
     }
 
     private setValidatorCallback(validatorCallback: ValidatorCallback): void {
-        const { context } = this;
-        context.validatorCallback = validatorCallback;
+        const { validator } = this;
+        validator.validatorCallback = validatorCallback;
     }
 }

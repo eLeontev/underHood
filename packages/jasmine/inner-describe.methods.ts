@@ -18,7 +18,16 @@ export class InnerDescribeMethods implements InnerDescribeMethodsCore {
 
     public it(description: string, callback: Callback): void {
         const describer = this.getActiveDescriber();
-        describer.itList = [...describer.itList, { description, callback }];
+        describer.testCases = [
+            ...describer.testCases,
+            {
+                it: {
+                    description,
+                    callback,
+                },
+                validators: [],
+            },
+        ];
     }
 
     private getActiveDescriber(): Describer {

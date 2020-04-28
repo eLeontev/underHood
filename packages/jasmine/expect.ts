@@ -1,30 +1,34 @@
 import { Matchers, MatchersTypes } from './matcher';
 
-import { Describers, Describer } from './describe.model';
+import { Describers, TestCase } from './describe.model';
 import { Validator, MatchersCore, ExpectedResult } from './matcher.model';
 import { errorMessages } from './error.messages';
+import { InnerMethods } from './expect.model';
 
 export class Expect {
-    private activeDesriberId: string;
+    private activeDescriberId: string;
+    private activeTestCaseIndex: number;
     private describers: Describers;
 
     public expect(expectedResult: ExpectedResult): MatchersCore {
-        const describer = this.describers[this.activeDesriberId];
+        const testCase = this.describers[this.activeDescriberId].testCases[
+            this.activeTestCaseIndex
+        ];
 
-        return this.getValidators(describer, expectedResult);
+        return this.getValidators(testCase, expectedResult);
     }
 
-    public getValidators(
-        describer: Describer,
+    private getValidators(
+        testCase: TestCase,
         expectedResult: ExpectedResult
     ): MatchersCore {
-        const matcher = this.getRegisteredValidator(describer, expectedResult);
+        const matcher = this.getRegisteredValidator(testCase, expectedResult);
 
         return new Matchers(matcher);
     }
 
     private getRegisteredValidator(
-        describer: Describer,
+        testCase: TestCase,
         expectedResult: ExpectedResult
     ): Validator {
         const validator: Validator = {
@@ -37,8 +41,16 @@ export class Expect {
             }),
         };
 
-        describer.validators = [...describer.validators, validator];
+        testCase.validators = [...testCase.validators, validator];
 
         return validator;
+    }
+
+    public getMethods(): InnerMethods {
+        return {
+            expect: this.expect,
+            getRegisteredValidator: this.getRegisteredValidator,
+            getValidators: this.getValidators,
+        };
     }
 }
