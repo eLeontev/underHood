@@ -22,7 +22,7 @@ describe('InnerDescribeMethods', () => {
         describer = {
             beforeEachList: [existedBeforeEachCallback],
             afterEachList: [existedAfterEachCallback],
-            itList: [existedItStructure],
+            testCases: [existedItStructure],
         };
     });
 
@@ -70,12 +70,12 @@ describe('InnerDescribeMethods', () => {
                 .mockReturnValue(describer);
         });
 
-        it('should add passed afterEach callback to list of existed to active describer', () => {
+        it('should init new test cases with passed description and callback and empty validators to active describer', () => {
             instance.it(description, callback);
             expect(instance.getActiveDescriber).toHaveBeenCalled();
-            expect(describer.itList).toEqual([
+            expect(describer.testCases).toEqual([
                 existedItStructure,
-                { description, callback },
+                { it: { description, callback }, validators: [] },
             ]);
         });
     });

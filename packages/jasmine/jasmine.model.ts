@@ -1,9 +1,8 @@
+import { ExpectedResult, MatchersCore } from './matcher.model';
+import { TestsResults } from './runner.model';
+
 export type Callback = () => void;
 export type CallbackList = Array<Callback>;
-
-export interface Matchers {
-    toBeTruthy(): boolean;
-}
 
 export type DescribeModel = (description: string, callback: Callback) => void;
 export interface DescribeCore {
@@ -18,6 +17,17 @@ export interface InnerDescribeMethodsCore {
     it: ItModel;
 }
 
-export type JasmineCore = DescribeCore & InnerDescribeMethodsCore;
-// it(description: string, callback: Callback);
-// expect<EntityToValidate>(entityToValidate: EntityToValidate): Matchers;
+export type ExpectModel = (expectedResult: ExpectedResult) => MatchersCore;
+export interface ExpectCore {
+    expect: ExpectModel;
+}
+
+export type RunModel = () => TestsResults;
+export interface RunCore {
+    run: RunModel;
+}
+
+export type JasmineCore = DescribeCore &
+    InnerDescribeMethodsCore &
+    ExpectCore &
+    RunCore;
