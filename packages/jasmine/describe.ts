@@ -1,11 +1,7 @@
 import uniqueid from 'lodash.uniqueid';
 
 import { Callback, DescribeCore } from './jasmine.model';
-import {
-    NextDescriberArguments,
-    Describer,
-    InnerMethods,
-} from './describe.model';
+import { NextDescriberArguments, Describer } from './describe.model';
 import { Store } from './store';
 
 export class Describe implements DescribeCore {
@@ -121,19 +117,5 @@ export class Describe implements DescribeCore {
             ...describer.childrenDescribersId,
             childDescriberId,
         ];
-    }
-
-    public getMethods(): InnerMethods {
-        return {
-            addChildDesriberId: this.addChildDesriberId,
-            setFormedDescriber: this.setFormedDescriber,
-            performChildrenDescribers: this.performChildrenDescribers,
-            initDescribe: this.initDescribe,
-            afterCallbackCall: this.afterCallbackCall,
-            beforeCallbackCall: this.beforeCallbackCall,
-            describeHandler: this.describeHandler,
-            childDescribe: this.childDescribe,
-            describe: this.describe,
-        };
     }
 }

@@ -246,20 +246,4 @@ describe('Describe', () => {
             ]);
         });
     });
-
-    describe('#getMethods', () => {
-        it('should  return describe methods to assigne them to main entry', () => {
-            expect(instance.getMethods()).toEqual({
-                addChildDesriberId: instance.addChildDesriberId,
-                setFormedDescriber: instance.setFormedDescriber,
-                performChildrenDescribers: instance.performChildrenDescribers,
-                initDescribe: instance.initDescribe,
-                afterCallbackCall: instance.afterCallbackCall,
-                beforeCallbackCall: instance.beforeCallbackCall,
-                describeHandler: instance.describeHandler,
-                childDescribe: instance.childDescribe,
-                describe: instance.describe,
-            });
-        });
-    });
 });
