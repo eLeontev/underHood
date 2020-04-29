@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any */
 
-import { Describe } from './describe';
-import { store } from './store';
+import { Describe } from '../describe';
+import { store } from '../store';
 
 describe('Describe', () => {
     let instance: any;
