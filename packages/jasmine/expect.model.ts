@@ -7,7 +7,7 @@ export interface InnerMethods extends ExpectCore {
         testCase: TestCase,
         expectedResult: ExpectedResult
     ): Validator;
-    getValidators(
+    getMastchers(
         testCase: TestCase,
         expectedResult: ExpectedResult
     ): MatchersCore;

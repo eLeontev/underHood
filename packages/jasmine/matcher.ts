@@ -75,6 +75,6 @@ export class Matchers implements MatchersCore {
 
     private setValidatorCallback(validatorCallback: ValidatorCallback): void {
         const { validator } = this;
-        validator.validatorCallback = validatorCallback;
+        validator.validatorResult = validatorCallback();
     }
 }

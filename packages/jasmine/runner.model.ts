@@ -1,4 +1,4 @@
-import { Validator, ValidatorResult, ValidatorResults } from './matcher.model';
+import { ValidatorResults } from './matcher.model';
 import { TestCase, Context } from './describe.model';
 
 export interface TestCaseResult {
@@ -14,7 +14,6 @@ export type TestsResults = Array<TestResults>;
 export interface InnerMethods {
     setActiveTestCaseIndex(index: number): void;
     setActiveDescriberId(describerId: string): void;
-    getValidatorResult({ validatorCallback }: Validator): ValidatorResult;
     performTestAndReturnItsResult(
         context: Context,
         { it, validators }: TestCase,

@@ -1,4 +1,4 @@
-import { ValidatorResult, Validator } from './matcher.model';
+import { Validator } from './matcher.model';
 import { Describer, TestCase, Context } from './describe.model';
 import { Callback } from './jasmine.model';
 import { InnerMethods, TestsResults, TestCaseResult } from './runner.model';
@@ -67,14 +67,10 @@ export class Runner {
 
         return {
             itDescription: it.description,
-            validatorResults: testCase.validators.map(this.getValidatorResult),
+            validatorResults: testCase.validators.map(
+                ({ validatorResult }: Validator) => validatorResult
+            ),
         };
-    }
-
-    private getValidatorResult({
-        validatorCallback,
-    }: Validator): ValidatorResult {
-        return validatorCallback();
     }
 
     private setActiveDescriberId(describerId: string): void {
@@ -89,7 +85,6 @@ export class Runner {
         return {
             setActiveTestCaseIndex: this.setActiveTestCaseIndex,
             setActiveDescriberId: this.setActiveDescriberId,
-            getValidatorResult: this.getValidatorResult,
             performTestAndReturnItsResult: this.performTestAndReturnItsResult,
             performTestsAndReturnTheirResults: this
                 .performTestsAndReturnTheirResults,

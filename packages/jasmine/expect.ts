@@ -15,16 +15,16 @@ export class Expect {
             this.activeTestCaseIndex
         ];
 
-        return this.getValidators(testCase, expectedResult);
+        return this.getMastchers(testCase, expectedResult);
     }
 
-    private getValidators(
+    private getMastchers(
         testCase: TestCase,
         expectedResult: ExpectedResult
     ): MatchersCore {
-        const matcher = this.getRegisteredValidator(testCase, expectedResult);
+        const validator = this.getRegisteredValidator(testCase, expectedResult);
 
-        return new Matchers(matcher);
+        return new Matchers(validator);
     }
 
     private getRegisteredValidator(
@@ -33,12 +33,12 @@ export class Expect {
     ): Validator {
         const validator: Validator = {
             expectedResult,
-            validatorCallback: () => ({
+            validatorResult: {
                 isSuccess: false,
                 errorMessage: errorMessages[MatchersTypes.expectDoNothing](
                     expectedResult
                 ),
-            }),
+            },
         };
 
         testCase.validators = [...testCase.validators, validator];
@@ -50,7 +50,7 @@ export class Expect {
         return {
             expect: this.expect,
             getRegisteredValidator: this.getRegisteredValidator,
-            getValidators: this.getValidators,
+            getMastchers: this.getMastchers,
         };
     }
 }
