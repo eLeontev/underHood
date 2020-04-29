@@ -1,5 +1,8 @@
-import { ErrorMessageCallback, ErrorMessages } from './error.messages.model';
-import { ExpectedResult } from './matcher.model';
+import {
+    ErrorMessageCallback,
+    ErrorMessages,
+} from './models/error.messages.model';
+import { ExpectedResult } from './models/matcher.model';
 
 const expectDoNothing: ErrorMessageCallback = (
     expectedResult: ExpectedResult

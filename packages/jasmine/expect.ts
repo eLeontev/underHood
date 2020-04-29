@@ -1,10 +1,13 @@
 import { Matchers, MatchersTypes } from './matcher';
-
-import { TestCase } from './describe.model';
-import { Validator, MatchersCore, ExpectedResult } from './matcher.model';
 import { errorMessages } from './error.messages';
-import { InnerMethods } from './expect.model';
-import { Store } from './store';
+
+import { TestCase } from './models/describe.model';
+import {
+    Validator,
+    MatchersCore,
+    ExpectedResult,
+} from './models/matcher.model';
+import { Store } from './models/store.model';
 
 export class Expect {
     constructor(private store: Store) {}
@@ -47,13 +50,5 @@ export class Expect {
         testCase.validators = [...testCase.validators, validator];
 
         return validator;
-    }
-
-    public getMethods(): InnerMethods {
-        return {
-            expect: this.expect,
-            getRegisteredValidator: this.getRegisteredValidator,
-            getMastchers: this.getMastchers,
-        };
     }
 }

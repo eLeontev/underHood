@@ -1,3 +1,5 @@
+import { errorMessages } from './error.messages';
+
 import {
     Validator,
     MatchersCore,
@@ -5,9 +7,8 @@ import {
     ExpectedResult,
     ActualResult,
     ValidatorCallback,
-} from './matcher.model';
-import { errorMessages } from './error.messages';
-import { ErrorMessageCallback } from './error.messages.model';
+} from './models/matcher.model';
+import { ErrorMessageCallback } from './models/error.messages.model';
 
 export enum MatchersTypes {
     expectDoNothing = 'expectDoNothing',
