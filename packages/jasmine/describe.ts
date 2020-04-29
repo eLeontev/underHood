@@ -2,23 +2,18 @@ import uniqueid from 'lodash.uniqueid';
 
 import { Callback, DescribeCore } from './jasmine.model';
 import {
-    Describers,
     NextDescriberArguments,
     Describer,
     InnerMethods,
 } from './describe.model';
+import { Store } from './store';
 
 export class Describe implements DescribeCore {
-    private activeDescriberId: string;
-    private isDescriberFormingInProgress = false;
-    private describers: Describers = {};
-    private rootDescribersId: Array<string> = [];
+    constructor(private store: Store) {}
 
-    private nextDescriberArguments: Array<NextDescriberArguments> = [];
-
-    public describe(description: string, callback: Callback): void {
+    public describe = (description: string, callback: Callback): void => {
         this.describeHandler(description, callback);
-    }
+    };
 
     private childDescribe(
         description: string,
@@ -33,9 +28,14 @@ export class Describe implements DescribeCore {
         callback: Callback,
         describerId?: string
     ): void {
-        if (this.isDescriberFormingInProgress) {
-            this.nextDescriberArguments = [
-                ...this.nextDescriberArguments,
+        const {
+            isDescriberFormingInProgress,
+            nextDescriberArguments,
+        } = this.store;
+
+        if (isDescriberFormingInProgress) {
+            this.store.nextDescriberArguments = [
+                ...nextDescriberArguments,
                 { description, callback },
             ];
 
@@ -48,15 +48,17 @@ export class Describe implements DescribeCore {
     }
 
     private beforeCallbackCall(description: string, describerId: string): void {
-        this.activeDescriberId = this.initDescribe(description, describerId);
-        this.isDescriberFormingInProgress = true;
+        const { store } = this;
+        store.activeDescriberId = this.initDescribe(description, describerId);
+        store.isDescriberFormingInProgress = true;
     }
 
     private afterCallbackCall(): void {
-        const { activeDescriberId } = this;
+        const { store } = this;
+        const { activeDescriberId } = store;
 
-        this.activeDescriberId = null;
-        this.isDescriberFormingInProgress = false;
+        store.activeDescriberId = null;
+        store.isDescriberFormingInProgress = false;
 
         this.performChildrenDescribers(activeDescriberId);
     }
@@ -79,8 +81,8 @@ export class Describe implements DescribeCore {
     }
 
     private performChildrenDescribers(describerId: string): void {
-        const nextDescriberArguments = [...this.nextDescriberArguments];
-        this.nextDescriberArguments = [];
+        const nextDescriberArguments = [...this.store.nextDescriberArguments];
+        this.store.nextDescriberArguments = [];
 
         nextDescriberArguments.forEach(
             ({ description, callback }: NextDescriberArguments) => {
@@ -97,12 +99,14 @@ export class Describe implements DescribeCore {
         describerId: string,
         isRootDescriber: boolean
     ): void {
+        const { store } = this;
+
         if (isRootDescriber) {
-            this.rootDescribersId = [...this.rootDescribersId, describerId];
+            store.rootDescribersId = [...store.rootDescribersId, describerId];
         }
 
-        this.describers = {
-            ...this.describers,
+        store.describers = {
+            ...store.describers,
             [describerId]: describer,
         };
     }
@@ -111,7 +115,7 @@ export class Describe implements DescribeCore {
         describerId: string,
         childDescriberId: string
     ): void {
-        const describer = this.describers[describerId];
+        const describer = this.store.describers[describerId];
 
         describer.childrenDescribersId = [
             ...describer.childrenDescribersId,
