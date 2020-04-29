@@ -11,15 +11,13 @@ import { Describe } from './describe';
 import { InnerDescribeMethods } from './inner-describe.methods';
 import { Expect } from './expect';
 import { Runner } from './runner';
-import { Store } from './store';
+import { Store, store } from './store';
 
 export class Jasmine implements JasmineCore {
     private store: Store = {
-        activeDescriberId: null,
-        isDescriberFormingInProgress: false,
+        ...store,
         describers: {},
         rootDescribersId: [],
-        activeTestCaseIndex: null,
         nextDescriberArguments: [],
     };
 
