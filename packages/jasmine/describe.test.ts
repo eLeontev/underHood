@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any */
 
 import { Describe } from './describe';
+import { store } from './store';
 
 describe('Describe', () => {
     let instance: any;
@@ -12,7 +13,7 @@ describe('Describe', () => {
     const activeDescriberId = 'activeDescriberId';
 
     beforeEach(() => {
-        instance = new Describe();
+        instance = new Describe({ ...store });
     });
 
     beforeEach(() => {
@@ -53,19 +54,22 @@ describe('Describe', () => {
         const isDescriberFormingInProgress = 'isDescriberFormingInProgress';
 
         beforeEach(() => {
-            instance.nextDescriberArguments = [isDescriberFormingInProgress];
+            instance.store.nextDescriberArguments = [
+                isDescriberFormingInProgress,
+            ];
+            instance.store.isDescriberFormingInProgress = false;
             instance.initDescribe = jest.fn();
-            instance.isDescriberFormingInProgress = false;
+
             instance.performChildrenDescribers = jest.fn();
             instance.beforeCallbackCall = jest.fn();
             instance.afterCallbackCall = jest.fn();
         });
 
         it('should store passed description and callback if previous description forming not completed yet', () => {
-            instance.isDescriberFormingInProgress = true;
+            instance.store.isDescriberFormingInProgress = true;
             instance.describeHandler(description, callback);
             expect(instance.initDescribe).not.toHaveBeenCalled();
-            expect(instance.nextDescriberArguments).toEqual([
+            expect(instance.store.nextDescriberArguments).toEqual([
                 isDescriberFormingInProgress,
                 { description, callback },
             ]);
@@ -100,22 +104,22 @@ describe('Describe', () => {
 
         it('should init describer and set its id as active describerId', () => {
             instance.beforeCallbackCall(description, describerId);
-            expect(instance.activeDescriberId).toBe(activeDescriberId);
-            expect(instance.isDescriberFormingInProgress).toBeTruthy();
+            expect(instance.store.activeDescriberId).toBe(activeDescriberId);
+            expect(instance.store.isDescriberFormingInProgress).toBeTruthy();
         });
     });
 
     describe('#afterCallbackCall', () => {
         beforeEach(() => {
             instance.performChildrenDescribers = jest.fn();
-            instance.activeDescriberId = activeDescriberId;
-            instance.isDescriberFormingInProgress = true;
+            instance.store.activeDescriberId = activeDescriberId;
+            instance.store.isDescriberFormingInProgress = true;
         });
 
         it('should clean up acitve describerId and mark forming describer completed', () => {
             instance.afterCallbackCall();
-            expect(instance.activeDescriberId).toBeNull();
-            expect(instance.isDescriberFormingInProgress).toBeFalsy();
+            expect(instance.store.activeDescriberId).toBeNull();
+            expect(instance.store.isDescriberFormingInProgress).toBeFalsy();
         });
 
         it('should perfrom children describers with passed active describerId', () => {
@@ -168,7 +172,7 @@ describe('Describe', () => {
         const parentDescriberId = 'parentDescriberId';
 
         beforeEach(() => {
-            instance.nextDescriberArguments = [{ description, callback }];
+            instance.store.nextDescriberArguments = [{ description, callback }];
             instance.childDescribe = jest.fn();
             instance.addChildDesriberId = jest.fn();
             instance.childDescribe = jest.fn();
@@ -176,7 +180,7 @@ describe('Describe', () => {
 
         it('should clean up next describerArguments', () => {
             instance.performChildrenDescribers(parentDescriberId, describerId);
-            expect(instance.nextDescriberArguments).toEqual([]);
+            expect(instance.store.nextDescriberArguments).toEqual([]);
         });
 
         it('should call #childDescribe for each children', () => {
@@ -202,9 +206,9 @@ describe('Describe', () => {
 
     describe('#setFormedDescriber', () => {
         it('should add describer to collection of existed based on its describerId', () => {
-            instance.describers = { existedDescribers: true };
+            instance.store.describers = { existedDescribers: true };
             instance.setFormedDescriber(describer, describerId, false);
-            expect(instance.describers).toEqual({
+            expect(instance.store.describers).toEqual({
                 existedDescribers: true,
                 [describerId]: describer,
             });
@@ -212,15 +216,15 @@ describe('Describe', () => {
 
         it('should add describer to collection of existed and to list of root desribers if describer is root with generated id', () => {
             const existedRootDescriberId = 'existedRootDescriberId';
-            instance.rootDescribersId = [existedRootDescriberId];
+            instance.store.rootDescribersId = [existedRootDescriberId];
 
             instance.setFormedDescriber(describer, describerId, true);
 
-            expect(instance.rootDescribersId).toEqual([
+            expect(instance.store.rootDescribersId).toEqual([
                 existedRootDescriberId,
                 describerId,
             ]);
-            expect(instance.describers).toEqual({
+            expect(instance.store.describers).toEqual({
                 [describerId]: describer,
             });
         });
@@ -232,7 +236,7 @@ describe('Describe', () => {
             const childDescriberId = 'childDescriberId';
             const describer = { childrenDescribersId: [existedChildId] };
 
-            instance.describers[describerId] = describer;
+            instance.store.describers[describerId] = describer;
 
             instance.addChildDesriberId(describerId, childDescriberId);
 
@@ -240,22 +244,6 @@ describe('Describe', () => {
                 existedChildId,
                 childDescriberId,
             ]);
-        });
-    });
-
-    describe('#getMethods', () => {
-        it('should  return describe methods to assigne them to main entry', () => {
-            expect(instance.getMethods()).toEqual({
-                addChildDesriberId: instance.addChildDesriberId,
-                setFormedDescriber: instance.setFormedDescriber,
-                performChildrenDescribers: instance.performChildrenDescribers,
-                initDescribe: instance.initDescribe,
-                afterCallbackCall: instance.afterCallbackCall,
-                beforeCallbackCall: instance.beforeCallbackCall,
-                describeHandler: instance.describeHandler,
-                childDescribe: instance.childDescribe,
-                describe: instance.describe,
-            });
         });
     });
 });

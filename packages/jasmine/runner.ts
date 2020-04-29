@@ -1,17 +1,15 @@
-import { ValidatorResult, Validator } from './matcher.model';
-import { Describer, TestCase, Context } from './describe.model';
+import { Validator } from './matcher.model';
+import { TestCase, Context } from './describe.model';
 import { Callback } from './jasmine.model';
-import { InnerMethods, TestsResults, TestCaseResult } from './runner.model';
+import { TestsResults, TestCaseResult, TestCaseResults } from './runner.model';
+import { Store } from './store';
 
 export class Runner {
-    private activeDescriberId: string;
-    private activeTestCaseIndex: number;
-    private rootDescribersId: Array<string> = [];
-    private describers: Array<Describer> = [];
+    constructor(private store: Store) {}
 
-    public run(): TestsResults {
-        return this.performDecribers(this.rootDescribersId, []);
-    }
+    public run = (): TestsResults => {
+        return this.performDecribers(this.store.rootDescribersId, []);
+    };
 
     private performDecribers(
         describersIds: Array<string>,
@@ -34,13 +32,13 @@ export class Runner {
             description,
             context,
             childrenDescribersId,
-        } = this.describers[describerId];
+        } = this.store.describers[describerId];
 
         this.setActiveDescriberId(describerId);
 
         beforeEachList.forEach((cb: Callback): void => cb.call(context));
 
-        const testCaseResults = testCases.map(
+        const testCaseResults: TestCaseResults = testCases.map(
             this.performTestAndReturnItsResult.bind(this, context)
         );
 
@@ -67,34 +65,17 @@ export class Runner {
 
         return {
             itDescription: it.description,
-            validatorResults: testCase.validators.map(this.getValidatorResult),
+            validatorResults: testCase.validators.map(
+                ({ validatorResult }: Validator) => validatorResult
+            ),
         };
-    }
-
-    private getValidatorResult({
-        validatorCallback,
-    }: Validator): ValidatorResult {
-        return validatorCallback();
     }
 
     private setActiveDescriberId(describerId: string): void {
-        this.activeDescriberId = describerId;
+        this.store.activeDescriberId = describerId;
     }
 
     private setActiveTestCaseIndex(index: number): void {
-        this.activeTestCaseIndex = index;
-    }
-
-    public getMethods(): InnerMethods {
-        return {
-            setActiveTestCaseIndex: this.setActiveTestCaseIndex,
-            setActiveDescriberId: this.setActiveDescriberId,
-            getValidatorResult: this.getValidatorResult,
-            performTestAndReturnItsResult: this.performTestAndReturnItsResult,
-            performTestsAndReturnTheirResults: this
-                .performTestsAndReturnTheirResults,
-            performDecribers: this.performDecribers,
-            run: this.run,
-        };
+        this.store.activeTestCaseIndex = index;
     }
 }

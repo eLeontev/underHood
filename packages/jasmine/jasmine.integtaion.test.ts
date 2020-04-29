@@ -67,7 +67,7 @@ instance.describe('root-5', () => {
 describe('Integration tests: Describe', () => {
     describe('should form valid relationship structure of describers for:', () => {
         it('"root-1": should form valid relationship structure of describers', () => {
-            expect(instance.describers['root-1']).toEqual({
+            expect(instance.store.describers['root-1']).toEqual({
                 description: 'root-1',
                 beforeEachList: [bfeCallbackFirst, bfeCallbackSecond],
                 afterEachList: [],
@@ -87,7 +87,7 @@ describe('Integration tests: Describe', () => {
         });
 
         it('"root-5": should form valid relationship structure of describers', () => {
-            expect(instance.describers['root-5']).toEqual({
+            expect(instance.store.describers['root-5']).toEqual({
                 description: 'root-5',
                 beforeEachList: [],
                 afterEachList: [],
@@ -103,7 +103,7 @@ describe('Integration tests: Describe', () => {
         });
 
         it('"child-2": should form valid relationship structure of describers', () => {
-            expect(instance.describers['child-2']).toEqual({
+            expect(instance.store.describers['child-2']).toEqual({
                 description: 'child-2',
                 beforeEachList: [],
                 afterEachList: [afeCallbackFirst],
@@ -114,7 +114,7 @@ describe('Integration tests: Describe', () => {
         });
 
         it('"child-3": should form valid relationship structure of describers', () => {
-            expect(instance.describers['child-3']).toEqual({
+            expect(instance.store.describers['child-3']).toEqual({
                 description: 'child-3',
                 beforeEachList: [bfeCallbackThird],
                 afterEachList: [afeCallbackSecond],
@@ -130,7 +130,7 @@ describe('Integration tests: Describe', () => {
         });
 
         it('"child-4": should form valid relationship structure of describers', () => {
-            expect(instance.describers['child-4']).toEqual({
+            expect(instance.store.describers['child-4']).toEqual({
                 description: 'child-4',
                 beforeEachList: [],
                 afterEachList: [],
@@ -146,7 +146,7 @@ describe('Integration tests: Describe', () => {
         });
 
         it('"child-6": should form valid relationship structure of describers', () => {
-            expect(instance.describers['child-6']).toEqual({
+            expect(instance.store.describers['child-6']).toEqual({
                 description: 'child-6',
                 beforeEachList: [],
                 afterEachList: [afeCallbackThird],
@@ -163,23 +163,28 @@ describe('Integration tests: Describe', () => {
     });
 
     it('should collect root describers id in separate list', () => {
-        expect(instance.rootDescribersId).toEqual(['root-1', 'root-5']);
+        expect(instance.store.rootDescribersId).toEqual(['root-1', 'root-5']);
     });
 
     it('should link children describers in parent', () => {
-        expect(instance.describers['root-1'].childrenDescribersId).toEqual([
-            'child-2',
-            'child-4',
-        ]);
-        expect(instance.describers['root-5'].childrenDescribersId).toEqual([
-            'child-6',
-        ]);
-        expect(instance.describers['child-2'].childrenDescribersId).toEqual([
-            'child-3',
-        ]);
-        expect(instance.describers['child-3'].childrenDescribersId).toEqual([]);
-        expect(instance.describers['child-4'].childrenDescribersId).toEqual([]);
-        expect(instance.describers['child-6'].childrenDescribersId).toEqual([]);
+        expect(
+            instance.store.describers['root-1'].childrenDescribersId
+        ).toEqual(['child-2', 'child-4']);
+        expect(
+            instance.store.describers['root-5'].childrenDescribersId
+        ).toEqual(['child-6']);
+        expect(
+            instance.store.describers['child-2'].childrenDescribersId
+        ).toEqual(['child-3']);
+        expect(
+            instance.store.describers['child-3'].childrenDescribersId
+        ).toEqual([]);
+        expect(
+            instance.store.describers['child-4'].childrenDescribersId
+        ).toEqual([]);
+        expect(
+            instance.store.describers['child-6'].childrenDescribersId
+        ).toEqual([]);
     });
 });
 

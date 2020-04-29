@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any */
 
 import { InnerDescribeMethods } from './inner-describe.methods';
+import { store } from './store';
 
 describe('InnerDescribeMethods', () => {
     let instance: any;
@@ -14,7 +15,7 @@ describe('InnerDescribeMethods', () => {
     const existedItStructure = 'existedItStructure';
 
     beforeEach(() => {
-        instance = new InnerDescribeMethods();
+        instance = new InnerDescribeMethods({ ...store });
     });
 
     beforeEach(() => {
@@ -82,23 +83,12 @@ describe('InnerDescribeMethods', () => {
 
     describe('#getActiveDescriber', () => {
         beforeEach(() => {
-            instance.activeDescriberId = activeDescriberId;
-            instance.describers[activeDescriberId] = describer;
+            instance.store.activeDescriberId = activeDescriberId;
+            instance.store.describers[activeDescriberId] = describer;
         });
 
         it('should return active describer', () => {
             expect(instance.getActiveDescriber()).toBe(describer);
-        });
-    });
-
-    describe('#getMethods', () => {
-        it('should  return innder-describe methods to assigne them to main entry', () => {
-            expect(instance.getMethods()).toEqual({
-                it: instance.it,
-                beforeEach: instance.beforeEach,
-                afterEach: instance.afterEach,
-                getActiveDescriber: instance.getActiveDescriber,
-            });
         });
     });
 });

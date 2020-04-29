@@ -12,7 +12,7 @@ export type ValidatorCallback = () => ValidatorResult;
 
 export interface Validator {
     expectedResult: ExpectedResult;
-    validatorCallback: ValidatorCallback;
+    validatorResult: ValidatorResult;
 }
 
 export interface MatchersCore {

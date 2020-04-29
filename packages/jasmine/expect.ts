@@ -1,30 +1,33 @@
 import { Matchers, MatchersTypes } from './matcher';
 
-import { Describers, TestCase } from './describe.model';
+import { TestCase } from './describe.model';
 import { Validator, MatchersCore, ExpectedResult } from './matcher.model';
 import { errorMessages } from './error.messages';
 import { InnerMethods } from './expect.model';
+import { Store } from './store';
 
 export class Expect {
-    private activeDescriberId: string;
-    private activeTestCaseIndex: number;
-    private describers: Describers;
+    constructor(private store: Store) {}
 
-    public expect(expectedResult: ExpectedResult): MatchersCore {
-        const testCase = this.describers[this.activeDescriberId].testCases[
-            this.activeTestCaseIndex
-        ];
+    public expect = (expectedResult: ExpectedResult): MatchersCore => {
+        const {
+            describers,
+            activeDescriberId,
+            activeTestCaseIndex,
+        } = this.store;
+        const testCase =
+            describers[activeDescriberId].testCases[activeTestCaseIndex];
 
-        return this.getValidators(testCase, expectedResult);
-    }
+        return this.getMastchers(testCase, expectedResult);
+    };
 
-    private getValidators(
+    private getMastchers(
         testCase: TestCase,
         expectedResult: ExpectedResult
     ): MatchersCore {
-        const matcher = this.getRegisteredValidator(testCase, expectedResult);
+        const validator = this.getRegisteredValidator(testCase, expectedResult);
 
-        return new Matchers(matcher);
+        return new Matchers(validator);
     }
 
     private getRegisteredValidator(
@@ -33,12 +36,12 @@ export class Expect {
     ): Validator {
         const validator: Validator = {
             expectedResult,
-            validatorCallback: () => ({
+            validatorResult: {
                 isSuccess: false,
                 errorMessage: errorMessages[MatchersTypes.expectDoNothing](
                     expectedResult
                 ),
-            }),
+            },
         };
 
         testCase.validators = [...testCase.validators, validator];
@@ -50,7 +53,7 @@ export class Expect {
         return {
             expect: this.expect,
             getRegisteredValidator: this.getRegisteredValidator,
-            getValidators: this.getValidators,
+            getMastchers: this.getMastchers,
         };
     }
 }
