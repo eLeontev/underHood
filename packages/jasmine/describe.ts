@@ -1,8 +1,8 @@
 import uniqueid from 'lodash.uniqueid';
 
-import { Callback, DescribeCore } from './jasmine.model';
-import { NextDescriberArguments, Describer } from './describe.model';
-import { Store } from './store';
+import { Callback, DescribeCore } from './models/jasmine.model';
+import { NextDescriberArguments, Describer } from './models/describe.model';
+import { Store } from './models/store.model';
 
 export class Describe implements DescribeCore {
     constructor(private store: Store) {}

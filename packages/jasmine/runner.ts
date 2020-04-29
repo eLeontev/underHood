@@ -1,8 +1,12 @@
-import { Validator } from './matcher.model';
-import { TestCase, Context } from './describe.model';
-import { Callback } from './jasmine.model';
-import { TestsResults, TestCaseResult, TestCaseResults } from './runner.model';
-import { Store } from './store';
+import { Validator } from './models/matcher.model';
+import { TestCase, Context } from './models/describe.model';
+import { Callback } from './models/jasmine.model';
+import {
+    TestsResults,
+    TestCaseResult,
+    TestCaseResults,
+} from './models/runner.model';
+import { Store } from './models/store.model';
 
 export class Runner {
     constructor(private store: Store) {}

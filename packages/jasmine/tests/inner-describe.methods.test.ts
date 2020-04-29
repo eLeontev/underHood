@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any */
 
-import { InnerDescribeMethods } from './inner-describe.methods';
-import { store } from './store';
+import { InnerDescribeMethods } from '../inner-describe.methods';
+import { store } from '../store';
 
 describe('InnerDescribeMethods', () => {
     let instance: any;

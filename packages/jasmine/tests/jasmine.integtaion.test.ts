@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function */
 
-import { Jasmine } from './jasmine';
+import { Jasmine } from '../jasmine';
 
 const instance: any = new Jasmine();
 

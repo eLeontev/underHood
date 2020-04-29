@@ -1,3 +1,9 @@
+import { Describe } from './describe';
+import { InnerDescribeMethods } from './inner-describe.methods';
+import { Expect } from './expect';
+import { Runner } from './runner';
+import { store } from './store';
+
 import {
     JasmineCore,
     DescribeModel,
@@ -5,13 +11,8 @@ import {
     ItModel,
     ExpectModel,
     RunModel,
-} from './jasmine.model';
-
-import { Describe } from './describe';
-import { InnerDescribeMethods } from './inner-describe.methods';
-import { Expect } from './expect';
-import { Runner } from './runner';
-import { Store, store } from './store';
+} from './models/jasmine.model';
+import { Store } from './models/store.model';
 
 export class Jasmine implements JasmineCore {
     private store: Store = {

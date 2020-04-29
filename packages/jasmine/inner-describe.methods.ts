@@ -1,6 +1,6 @@
-import { InnerDescribeMethodsCore, Callback } from './jasmine.model';
-import { Describer } from './describe.model';
-import { Store } from './store';
+import { InnerDescribeMethodsCore, Callback } from './models/jasmine.model';
+import { Describer } from './models/describe.model';
+import { Store } from './models/store.model';
 
 export class InnerDescribeMethods implements InnerDescribeMethodsCore {
     constructor(private store: Store) {}

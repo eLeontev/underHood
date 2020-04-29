@@ -6,4 +6,4 @@ This repo demonstrates core concepts of modern/popular JS libraries
 ## packages
 
 -   express (core principies and imitation their communication on any request)
--   jasmine/jest (core concepts describe/beforeEach/afterEach/it/ (expect/matchers - will be implemented soon) and their communication on test run(will be implemented soon))
+-   jasmine/jest (core concepts describe/beforeEach/afterEach/it/expect/matchers and their communication on test run)
