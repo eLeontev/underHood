@@ -1,6 +1,5 @@
 import { InnerDescribeMethodsCore, Callback } from './jasmine.model';
 import { Describer } from './describe.model';
-import { InnerMethods } from './inner-describe.methods.model';
 import { Store } from './store';
 
 export class InnerDescribeMethods implements InnerDescribeMethodsCore {
@@ -33,14 +32,5 @@ export class InnerDescribeMethods implements InnerDescribeMethodsCore {
     private getActiveDescriber(): Describer {
         const { activeDescriberId, describers } = this.store;
         return describers[activeDescriberId];
-    }
-
-    public getMethods(): InnerMethods {
-        return {
-            it: this.it,
-            beforeEach: this.beforeEach,
-            afterEach: this.afterEach,
-            getActiveDescriber: this.getActiveDescriber,
-        };
     }
 }

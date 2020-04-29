@@ -91,15 +91,4 @@ describe('InnerDescribeMethods', () => {
             expect(instance.getActiveDescriber()).toBe(describer);
         });
     });
-
-    describe('#getMethods', () => {
-        it('should  return innder-describe methods to assigne them to main entry', () => {
-            expect(instance.getMethods()).toEqual({
-                it: instance.it,
-                beforeEach: instance.beforeEach,
-                afterEach: instance.afterEach,
-                getActiveDescriber: instance.getActiveDescriber,
-            });
-        });
-    });
 });
