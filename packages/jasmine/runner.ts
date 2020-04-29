@@ -1,12 +1,7 @@
 import { Validator } from './matcher.model';
 import { TestCase, Context } from './describe.model';
 import { Callback } from './jasmine.model';
-import {
-    InnerMethods,
-    TestsResults,
-    TestCaseResult,
-    TestCaseResults,
-} from './runner.model';
+import { TestsResults, TestCaseResult, TestCaseResults } from './runner.model';
 import { Store } from './store';
 
 export class Runner {
@@ -82,17 +77,5 @@ export class Runner {
 
     private setActiveTestCaseIndex(index: number): void {
         this.store.activeTestCaseIndex = index;
-    }
-
-    public getMethods(): InnerMethods {
-        return {
-            setActiveTestCaseIndex: this.setActiveTestCaseIndex,
-            setActiveDescriberId: this.setActiveDescriberId,
-            performTestAndReturnItsResult: this.performTestAndReturnItsResult,
-            performTestsAndReturnTheirResults: this
-                .performTestsAndReturnTheirResults,
-            performDecribers: this.performDecribers,
-            run: this.run,
-        };
     }
 }
