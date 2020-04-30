@@ -16,7 +16,7 @@ const itCallbackFirst = () => {
     instance.expect('without matcher');
 };
 const itCallbackSecond = () => {
-    instance.expect('valid').toBeTruthly();
+    instance.expect('valid').toBeTruthy();
 };
 const itCallbackThird = () => {
     instance.expect('invalid').toBeFalsy();
@@ -27,7 +27,7 @@ const itCallbackFourth = () => {
     instance.expect(null).toBeFalsy();
 };
 const itCallbackFifth = () => {
-    instance.expect('valid').toBeTruthly();
+    instance.expect('valid').toBeTruthy();
 };
 const itCallbackSixth = () => {
     instance.expect(0).toBeFalsy();

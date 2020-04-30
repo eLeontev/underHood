@@ -5,6 +5,7 @@ import {
     Routes,
     methods,
     Request,
+    Response,
     MiddlewaresResult,
 } from './express.model';
 

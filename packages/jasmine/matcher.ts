@@ -13,7 +13,7 @@ import { ErrorMessageCallback } from './models/error.messages.model';
 export enum MatchersTypes {
     expectDoNothing = 'expectDoNothing',
     toBeFalsy = 'toBeFalsy',
-    toBeTruthly = 'toBeTruthly',
+    toBeTruthy = 'toBeTruthy',
 }
 
 export class Matchers implements MatchersCore {
@@ -41,7 +41,7 @@ export class Matchers implements MatchersCore {
         );
     }
 
-    public toBeTruthly(): void {
+    public toBeTruthy(): void {
         this.setValidatorCallback(
             (): ValidatorResult => {
                 const {
@@ -51,7 +51,7 @@ export class Matchers implements MatchersCore {
 
                 const errorMessage = this.getErrorMessage(
                     isSuccess,
-                    errorMessages[MatchersTypes.toBeFalsy],
+                    errorMessages[MatchersTypes.toBeTruthy],
                     expectedResult
                 );
 
