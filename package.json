@@ -4,7 +4,7 @@
     "description": "the repo demonstrates core concepts of modern/popular JS libraries",
     "main": "index.js",
     "scripts": {
-        "validate": "eslint packages/**/*.ts",
+        "validate": "eslint packages/**/*.ts & tsc -b",
         "test:ci": "jest --coverage && coveralls < coverage/lcov.info",
         "test": "jest"
     },
