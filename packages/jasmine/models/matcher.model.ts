@@ -16,6 +16,6 @@ export interface Validator {
 }
 
 export interface MatchersCore {
-    toBeTruthly(): void;
+    toBeTruthy(): void;
     toBeFalsy(): void;
 }

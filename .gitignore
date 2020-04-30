@@ -106,3 +106,6 @@ dist
 # vscode 
 .vscode
 launch.json
+
+# ts
+bundle

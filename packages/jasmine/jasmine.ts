@@ -34,27 +34,21 @@ export class Jasmine implements JasmineCore {
     public run: RunModel;
 
     constructor() {
-        this.setPublicApi(
-            new Describe(this.store),
-            new InnerDescribeMethods(this.store),
-            new Expect(this.store),
-            new Runner(this.store)
-        );
-    }
-
-    private setPublicApi(
-        describeInstance: Describe,
-        innerDescribeMethodsInstance: InnerDescribeMethods,
-        expectInstance: Expect,
-        runnerInstance: Runner
-    ): void {
+        const describeInstance = new Describe(this.store);
         this.describe = describeInstance.describe;
 
+        const innerDescribeMethodsInstance = new InnerDescribeMethods(
+            this.store
+        );
         this.afterEach = innerDescribeMethodsInstance.afterEach;
         this.beforeEach = innerDescribeMethodsInstance.beforeEach;
 
         this.it = innerDescribeMethodsInstance.it;
+
+        const expectInstance = new Expect(this.store);
         this.expect = expectInstance.expect;
+
+        const runnerInstance = new Runner(this.store);
 
         this.run = runnerInstance.run;
     }
