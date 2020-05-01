@@ -1,4 +1,4 @@
-import { Validator } from './models/matcher.model';
+import { Validator } from './models/matchers.model';
 import { TestCase, Context } from './models/describe.model';
 import { Callback } from './models/jasmine.model';
 import {

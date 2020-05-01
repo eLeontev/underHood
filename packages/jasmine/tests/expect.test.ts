@@ -2,13 +2,13 @@
 
 import { Expect } from '../expect';
 import { store } from '../store';
-import { Matchers } from '../matcher';
+import { Matchers } from '../matchers';
 
 describe('Expect', () => {
     let instance: any;
 
     let testCase: any;
-    const expectedResult: any = 'expectedResult';
+    const actualResult: any = 'actualResult';
 
     beforeEach(() => {
         testCase = 'testCase';
@@ -42,14 +42,14 @@ describe('Expect', () => {
         });
 
         it('should return matchers for expected value', () => {
-            expect(instance.expect(expectedResult)).toBe(matchers);
+            expect(instance.expect(actualResult)).toBe(matchers);
         });
 
         it('should pass to getMatchers method expected result and active test case', () => {
-            instance.expect(expectedResult);
+            instance.expect(actualResult);
             expect(instance.getMastchers).toHaveBeenCalledWith(
                 testCase,
-                expectedResult
+                actualResult
             );
         });
     });
@@ -65,15 +65,15 @@ describe('Expect', () => {
         });
 
         it('should register validator based on passed test case and expected result', () => {
-            instance.getMastchers(testCase, expectedResult);
+            instance.getMastchers(testCase, actualResult);
             expect(instance.getRegisteredValidator).toHaveBeenCalledWith(
                 testCase,
-                expectedResult
+                actualResult
             );
         });
 
         it('should create new instance of matchers with ave validator in their', () => {
-            const matchers = instance.getMastchers(testCase, expectedResult);
+            const matchers = instance.getMastchers(testCase, actualResult);
             expect(matchers.validator).toBe(validator);
             expect(matchers.__proto__.constructor).toBe(Matchers);
         });
@@ -88,18 +88,18 @@ describe('Expect', () => {
                 validators: [existedValidators],
             };
             newCreadtedValidator = {
-                expectedResult,
+                actualResult,
                 validatorResult: {
                     isSuccess: false,
                     errorMessage: `looks like this expect does nothing with: ${JSON.stringify(
-                        expectedResult
+                        actualResult
                     )}`,
                 },
             };
         });
 
         it('should mutate passed test case to add new validator to existed validators', () => {
-            instance.getRegisteredValidator(testCase, expectedResult);
+            instance.getRegisteredValidator(testCase, actualResult);
 
             const [existed, validator] = testCase.validators;
 
@@ -109,7 +109,7 @@ describe('Expect', () => {
 
         it('should return new created validator', () => {
             expect(
-                instance.getRegisteredValidator(testCase, expectedResult)
+                instance.getRegisteredValidator(testCase, actualResult)
             ).toEqual(newCreadtedValidator);
         });
     });

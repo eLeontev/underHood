@@ -1,5 +1,5 @@
 import { CallbackList, Callback } from './jasmine.model';
-import { Validator } from './matcher.model';
+import { Validator } from './matchers.model';
 
 export interface It {
     description: string;
