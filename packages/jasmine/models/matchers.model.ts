@@ -8,14 +8,14 @@ export type ValidatorResults = Array<ValidatorResult>;
 export type ExpectedResult = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActualResult = any;
-export type ValidatorCallback = () => ValidatorResult;
 
 export interface Validator {
-    expectedResult: ExpectedResult;
+    actualResult: ActualResult;
     validatorResult: ValidatorResult;
 }
 
+export type MatcherMethod = (...expectedResult: Array<ExpectedResult>) => void;
 export interface MatchersCore {
-    toBeTruthy(): void;
-    toBeFalsy(): void;
+    toBeTruthy: MatcherMethod;
+    toBeFalsy: MatcherMethod;
 }

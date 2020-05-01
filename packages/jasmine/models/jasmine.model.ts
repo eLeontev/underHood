@@ -1,4 +1,4 @@
-import { ExpectedResult, MatchersCore } from './matcher.model';
+import { MatchersCore, ActualResult } from './matchers.model';
 import { TestsResults } from './runner.model';
 
 export type Callback = () => void;
@@ -17,7 +17,7 @@ export interface InnerDescribeMethodsCore {
     it: ItModel;
 }
 
-export type ExpectModel = (expectedResult: ExpectedResult) => MatchersCore;
+export type ExpectModel = (actualResult: ActualResult) => MatchersCore;
 export interface ExpectCore {
     expect: ExpectModel;
 }

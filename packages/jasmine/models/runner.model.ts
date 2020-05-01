@@ -1,4 +1,4 @@
-import { ValidatorResults } from './matcher.model';
+import { ValidatorResults } from './matchers.model';
 
 export interface TestCaseResult {
     itDescription: string;
