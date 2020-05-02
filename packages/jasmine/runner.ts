@@ -7,28 +7,30 @@ import {
     TestCaseResults,
 } from './models/runner.model';
 import { Store } from './models/store.model';
+import { asyncReduce, asyncMap } from './async-utils';
 
 export class Runner {
     constructor(private store: Store) {}
 
-    public run = (): TestsResults => {
-        return this.performDecribers(this.store.rootDescribersId, []);
+    public run = async (): Promise<TestsResults> => {
+        return await this.performDecribers(this.store.rootDescribersId, []);
     };
 
-    private performDecribers(
+    private async performDecribers(
         describersIds: Array<string>,
         testsResults: TestsResults
-    ): TestsResults {
-        return describersIds.reduce(
+    ): Promise<TestsResults> {
+        return await asyncReduce<string, TestsResults>(
+            describersIds,
             this.performTestsAndReturnTheirResults.bind(this),
             testsResults
         );
     }
 
-    private performTestsAndReturnTheirResults(
+    private async performTestsAndReturnTheirResults(
         testsResults: TestsResults,
         describerId: string
-    ): TestsResults {
+    ): Promise<TestsResults> {
         const {
             testCases,
             beforeEachList,
@@ -42,30 +44,31 @@ export class Runner {
 
         beforeEachList.forEach((cb: Callback): void => cb.call(context));
 
-        const testCaseResults: TestCaseResults = testCases.map(
-            this.performTestAndReturnItsResult.bind(this, context)
-        );
+        const testCaseResults: TestCaseResults = await asyncMap<
+            TestCase,
+            TestCaseResult
+        >(testCases, this.performTestAndReturnItsResult.bind(this, context));
 
         afterEachList.forEach((cb: Callback): void => cb.call(context));
 
         this.setActiveDescriberId(null);
         this.setActiveTestCaseIndex(null);
 
-        return this.performDecribers(childrenDescribersId, [
+        return await this.performDecribers(childrenDescribersId, [
             ...testsResults,
             { description, testCaseResults },
         ]);
     }
 
-    private performTestAndReturnItsResult(
+    private async performTestAndReturnItsResult(
         context: Context,
         testCase: TestCase,
         index: number
-    ): TestCaseResult {
+    ): Promise<TestCaseResult> {
         const { it } = testCase;
         this.setActiveTestCaseIndex(index);
 
-        it.callback.call(context);
+        await it.callback.call(context);
 
         return {
             itDescription: it.description,
