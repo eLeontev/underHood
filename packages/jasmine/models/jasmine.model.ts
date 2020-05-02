@@ -22,7 +22,7 @@ export interface ExpectCore {
     expect: ExpectModel;
 }
 
-export type RunModel = () => TestsResults;
+export type RunModel = () => Promise<TestsResults>;
 export interface RunCore {
     run: RunModel;
 }
