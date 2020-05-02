@@ -1,70 +1,40 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Jasmine } from '../jasmine';
-
-const instance: any = new Jasmine();
-
-const bfeCallbackFirst = () => {};
-const bfeCallbackSecond = () => {};
-const bfeCallbackThird = () => {};
-
-const afeCallbackFirst = () => {};
-const afeCallbackSecond = () => {};
-const afeCallbackThird = () => {};
-
-const itCallbackFirst = () => {
-    instance.expect('without matcher');
-};
-const itCallbackSecond = () => {
-    instance.expect('valid').toBeTruthy();
-};
-const itCallbackThird = () => {
-    instance.expect('invalid').toBeFalsy();
-};
-const itCallbackFourth = () => {
-    instance.expect(false).toBeFalsy();
-    instance.expect(undefined).toBeFalsy();
-    instance.expect(null).toBeFalsy();
-};
-const itCallbackFifth = () => {
-    instance.expect('valid').toBeTruthy();
-};
-const itCallbackSixth = () => {
-    instance.expect(0).toBeFalsy();
-    instance.expect('').toBeFalsy();
-};
-
-instance.describe('root-1', () => {
-    instance.beforeEach(bfeCallbackFirst);
-    instance.it('it-1', itCallbackFirst);
-    instance.describe('child-2', () => {
-        instance.afterEach(afeCallbackFirst);
-
-        instance.describe('child-3', () => {
-            instance.beforeEach(bfeCallbackThird);
-            instance.it('it-3', itCallbackThird);
-            instance.afterEach(afeCallbackSecond);
-        });
-    });
-
-    instance.beforeEach(bfeCallbackSecond);
-    instance.describe('child-4', () => {
-        instance.it('it-4', itCallbackFourth);
-    });
-
-    instance.it('it-2', itCallbackSecond);
-});
-
-instance.describe('root-5', () => {
-    instance.describe('child-6', () => {
-        instance.afterEach(afeCallbackThird);
-        instance.it('it-6', itCallbackSixth);
-    });
-
-    instance.it('it-5', itCallbackFifth);
-});
+import { getTestInstanceWithMockData } from '../mock/integration.mock';
 
 describe('Integration tests: Describe', () => {
+    let instance: any;
+    let bfeCallbackFirst: any;
+    let bfeCallbackSecond: any;
+    let bfeCallbackThird: any;
+    let afeCallbackFirst: any;
+    let afeCallbackSecond: any;
+    let afeCallbackThird: any;
+    let itCallbackFirst: any;
+    let itCallbackSecond: any;
+    let itCallbackThird: any;
+    let itCallbackFourth: any;
+    let itCallbackFifth: any;
+    let itCallbackSixth: any;
+
+    beforeAll(() => {
+        const instanceWithMockData = getTestInstanceWithMockData();
+
+        instance = instanceWithMockData.instance;
+        bfeCallbackFirst = instanceWithMockData.bfeCallbackFirst;
+        bfeCallbackSecond = instanceWithMockData.bfeCallbackSecond;
+        bfeCallbackThird = instanceWithMockData.bfeCallbackThird;
+        afeCallbackFirst = instanceWithMockData.afeCallbackFirst;
+        afeCallbackSecond = instanceWithMockData.afeCallbackSecond;
+        afeCallbackThird = instanceWithMockData.afeCallbackThird;
+        itCallbackFirst = instanceWithMockData.itCallbackFirst;
+        itCallbackSecond = instanceWithMockData.itCallbackSecond;
+        itCallbackThird = instanceWithMockData.itCallbackThird;
+        itCallbackFourth = instanceWithMockData.itCallbackFourth;
+        itCallbackFifth = instanceWithMockData.itCallbackFifth;
+        itCallbackSixth = instanceWithMockData.itCallbackSixth;
+    });
+
     describe('should form valid relationship structure of describers for:', () => {
         it('"root-1": should form valid relationship structure of describers', () => {
             expect(instance.store.describers['root-1']).toEqual({
@@ -189,13 +159,21 @@ describe('Integration tests: Describe', () => {
 });
 
 describe('results validation', () => {
-    let results: any;
+    let instance: any;
 
     beforeEach(() => {
-        results = instance.run();
+        instance = getTestInstanceWithMockData().instance;
     });
 
-    it('should return valid results', () => {
+    it('should return promise with reuslts of #run', () => {
+        const resultsPromise = instance.run();
+        expect(resultsPromise.then((res: any) => res)).toBeDefined();
+        expect(resultsPromise.catch((res: any) => res)).toBeDefined();
+    });
+
+    it('should return valid results even for async it cases', async () => {
+        const results = await instance.run();
+
         expect(results).toEqual([
             {
                 description: 'root-1',
