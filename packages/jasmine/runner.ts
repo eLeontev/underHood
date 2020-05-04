@@ -1,4 +1,12 @@
-import { Validator } from './models/matchers.model';
+import {
+    asyncReduce,
+    asyncMap,
+    getPromseResolvedInAvailableTimeFrame,
+    availableAsyncCallbackPerormanceDelay,
+} from './async-utils';
+import { errorMessages } from './error.messages';
+
+import { Validator, ValidatorResult } from './models/matchers.model';
 import { TestCase, Context } from './models/describe.model';
 import { Callback } from './models/jasmine.model';
 import {
@@ -7,7 +15,6 @@ import {
     TestCaseResults,
 } from './models/runner.model';
 import { Store } from './models/store.model';
-import { asyncReduce, asyncMap } from './async-utils';
 
 export class Runner {
     constructor(private store: Store) {}
@@ -68,14 +75,36 @@ export class Runner {
         const { it } = testCase;
         this.setActiveTestCaseIndex(index);
 
-        await it.callback.call(context);
+        const errorValidatorResult = await this.asyncCallbackHanlder(
+            it.callback,
+            context
+        );
 
         return {
             itDescription: it.description,
-            validatorResults: testCase.validators.map(
-                ({ validatorResult }: Validator) => validatorResult
-            ),
+            validatorResults: errorValidatorResult
+                ? [errorValidatorResult]
+                : testCase.validators.map(
+                      ({ validatorResult }: Validator) => validatorResult
+                  ),
         };
+    }
+
+    private async asyncCallbackHanlder(
+        callback: Callback,
+        context: Context
+    ): Promise<void | ValidatorResult> {
+        const callbackPromise = Promise.resolve(callback.call(context)).then(
+            () => null
+        );
+        const errorTestPerofomrancePromise = getPromseResolvedInAvailableTimeFrame(
+            errorMessages.testTimeFrameDurationExeeded(
+                availableAsyncCallbackPerormanceDelay
+            ),
+            availableAsyncCallbackPerormanceDelay
+        );
+
+        return Promise.race([callbackPromise, errorTestPerofomrancePromise]);
     }
 
     private setActiveDescriberId(describerId: string): void {
