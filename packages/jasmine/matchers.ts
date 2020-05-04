@@ -19,12 +19,18 @@ export enum MatchersTypes {
 }
 
 export class Matchers implements MatchersCore {
+    public not: MatchersCore;
+
     private getErrorMessage: GetErrorMessage = getErrorMessage;
 
     public toBeFalsy: MatcherMethod;
     public toBeTruthy: MatcherMethod;
 
-    constructor(private validator: Validator, validators: Validators) {
+    constructor(
+        private validator: Validator,
+        validators: Validators,
+        private isNot?: boolean
+    ) {
         this.toBeFalsy = this.getValidator(
             validators.toBeFalsy,
             MatchersTypes.toBeFalsy
@@ -33,6 +39,8 @@ export class Matchers implements MatchersCore {
             validators.toBeTruthy,
             MatchersTypes.toBeTruthy
         );
+
+        this.setNotField(validator, validators, isNot);
     }
 
     private getValidator(
@@ -41,13 +49,20 @@ export class Matchers implements MatchersCore {
     ): (expectedResults: Array<ExpectedResult>) => void {
         return (...expectedResults: Array<ExpectedResult>): void => {
             const actualResult = this.getActualResult();
-            const isSuccess = validatorMethod(actualResult, ...expectedResults);
+            const validatorMethodResult = validatorMethod(
+                actualResult,
+                ...expectedResults
+            );
+            const isSuccess = this.isNot
+                ? !validatorMethodResult
+                : validatorMethodResult;
 
             this.setValidatorResult({
                 isSuccess,
                 errorMessage: this.getErrorMessage(
                     isSuccess,
                     errorMessages[errorMessageType],
+                    this.isNot,
                     actualResult
                 ),
             });
@@ -61,5 +76,15 @@ export class Matchers implements MatchersCore {
     private setValidatorResult(validatorResult: ValidatorResult): void {
         const { validator } = this;
         validator.validatorResult = validatorResult;
+    }
+
+    private setNotField(
+        validator: Validator,
+        validators: Validators,
+        isNot: boolean
+    ): void {
+        if (!isNot) {
+            this.not = new Matchers(validator, validators, true);
+        }
     }
 }
