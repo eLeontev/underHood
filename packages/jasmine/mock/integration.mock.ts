@@ -3,7 +3,7 @@
 import { Jasmine } from '../jasmine';
 
 export const getTestInstanceWithMockData = () => {
-    const instance: any = new Jasmine();
+    const instance = new Jasmine();
 
     const bfeCallbackFirst = () => {};
     const bfeCallbackSecond = () => {};
@@ -32,8 +32,8 @@ export const getTestInstanceWithMockData = () => {
         instance.expect(null).toBeFalsy();
     };
     const itCallbackFifth = () => {
-        instance.expect('invalid').toBeFalsy();
-        instance.expect('valid').toBeTruthy();
+        instance.expect('invalid').not.toBeFalsy();
+        instance.expect('valid').not.toBeTruthy();
     };
     const itCallbackSixth = async () => {
         instance.expect(0).toBeFalsy();

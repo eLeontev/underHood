@@ -2,6 +2,7 @@ import { ExpectedResult, ActualResult } from './matchers.model';
 import { MatchersTypes } from '../matchers';
 
 export type ErrorMessageCallback = (
+    isNot: boolean,
     expectedResult: ExpectedResult,
     actualResult?: ActualResult
 ) => string;
@@ -13,6 +14,7 @@ export type ErrorMessages = {
 export type GetErrorMessage = (
     isSuccess: boolean,
     errorMessageCallback: ErrorMessageCallback,
+    isNot: boolean,
     expectedResult: ExpectedResult,
     actualResult?: ActualResult
 ) => string;

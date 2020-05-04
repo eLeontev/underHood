@@ -16,6 +16,7 @@ export interface Validator {
 
 export type MatcherMethod = (...expectedResult: Array<ExpectedResult>) => void;
 export interface MatchersCore {
+    not: MatchersCore;
     toBeTruthy: MatcherMethod;
     toBeFalsy: MatcherMethod;
 }
