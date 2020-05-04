@@ -99,6 +99,7 @@ export class Runner {
         );
         const errorTestPerofomrancePromise = getPromseResolvedInAvailableTimeFrame(
             errorMessages.testTimeFrameDurationExeeded(
+                false,
                 availableAsyncCallbackPerormanceDelay
             ),
             availableAsyncCallbackPerormanceDelay
