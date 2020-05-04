@@ -245,12 +245,12 @@ describe('results validation', () => {
                     itDescription: 'it-5',
                     validatorResults: [
                         {
-                            errorMessage: 'expected "invalid" to be falsy',
-                            isSuccess: false,
-                        },
-                        {
                             isSuccess: true,
                             errorMessage: '',
+                        },
+                        {
+                            errorMessage: 'expected "valid" not to be truthy',
+                            isSuccess: false,
                         },
                     ],
                 },
