@@ -20,8 +20,8 @@ export const getTestInstanceWithMockData = () => {
         instance.expect('without matcher');
     };
     const itCallbackSecond = async () => {
-        await asyncMethod(150);
         instance.expect('valid').toBeTruthy();
+        await asyncMethod(150);
     };
     const itCallbackThird = () => {};
     const itCallbackFourth = async () => {
