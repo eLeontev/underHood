@@ -1,13 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
     errorMessages,
     expectDoNothing,
     toBeFalsy,
     toBeTruthy,
     getErrorMessage,
+    testTimeFrameDurationExeeded,
 } from '../error.messages';
 
 describe('errorMessages', () => {
     it('should contain error messages for all matchers', () => {
+        expect(errorMessages.testTimeFrameDurationExeeded).toBe(
+            testTimeFrameDurationExeeded
+        );
         expect(errorMessages.expectDoNothing).toBe(expectDoNothing);
         expect(errorMessages.toBeFalsy).toBe(toBeFalsy);
         expect(errorMessages.toBeTruthy).toBe(toBeTruthy);
