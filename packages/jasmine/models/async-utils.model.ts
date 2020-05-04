@@ -1,3 +1,5 @@
+import { ValidatorResult } from './matchers.model';
+
 /**
  * async map
  */
@@ -27,3 +29,5 @@ export type AsyncReduce = <InitialElement, Result>(
     asyncCallback: AsyncReduceCallback<Result, InitialElement>,
     initialResult: Result
 ) => Promise<Result>;
+
+export type Resolve = (validatorResult: ValidatorResult) => void;

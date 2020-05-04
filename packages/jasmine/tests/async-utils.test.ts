@@ -1,4 +1,9 @@
-import { asyncMap, asyncReduce } from '../async-utils';
+import {
+    asyncMap,
+    asyncReduce,
+    availableAsyncCallbackPerormanceDelay,
+    getPromseResolvedInAvailableTimeFrame,
+} from '../async-utils';
 import {
     AsyncMapCallback,
     AsyncReduceCallback,
@@ -52,6 +57,21 @@ describe('#asyncReduce', () => {
             '3': 9,
             '4': 16,
             '5': 25,
+        });
+    });
+});
+
+describe('#getPromseResolvedInAvailableTimeFrame', () => {
+    it('should return promise which will be resolved after passed delay with error message', async () => {
+        const errorMessage = 'errorMessage';
+        expect(
+            await getPromseResolvedInAvailableTimeFrame(
+                errorMessage,
+                availableAsyncCallbackPerormanceDelay
+            )
+        ).toEqual({
+            isSuccess: false,
+            errorMessage,
         });
     });
 });

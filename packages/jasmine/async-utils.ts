@@ -3,7 +3,9 @@ import {
     AsyncMapCallback,
     AsyncReduce,
     AsyncReduceCallback,
+    Resolve,
 } from './models/async-utils.model';
+import { ValidatorResult } from './models/matchers.model';
 
 export const asyncMap: AsyncMap = async <InitialElement, ResultElement>(
     list: Array<InitialElement>,
@@ -31,4 +33,20 @@ export const asyncReduce: AsyncReduce = async <Result, InitialElement>(
     }
 
     return result;
+};
+
+export const availableAsyncCallbackPerormanceDelay = 100; //ms
+export const getPromseResolvedInAvailableTimeFrame = (
+    errorMessage: string,
+    availableAsyncCallbackPerormanceDelay: number
+): Promise<ValidatorResult> => {
+    let resolve: Resolve;
+    const promise = new Promise((res: Resolve) => (resolve = res));
+
+    setTimeout(
+        () => resolve({ isSuccess: false, errorMessage }),
+        availableAsyncCallbackPerormanceDelay
+    );
+
+    return promise;
 };
