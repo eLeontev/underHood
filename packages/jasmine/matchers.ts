@@ -10,6 +10,7 @@ import { Validators } from './validators';
 import { ValidatorMethod } from './models/validators.model';
 
 export enum MatchersTypes {
+    testTimeFrameDurationExeeded = 'testTimeFrameDurationExeeded',
     expectDoNothing = 'expectDoNothing',
     toBeFalsy = 'toBeFalsy',
     toBeTruthy = 'toBeTruthy',

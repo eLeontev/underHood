@@ -173,104 +173,107 @@ describe('results validation', () => {
 
     it('should return valid results even for async it cases', async () => {
         const results = await instance.run();
+        const [root1, child2, child3, child4, root5, child6] = results;
+        expect(root1).toEqual({
+            description: 'root-1',
+            testCaseResults: [
+                {
+                    itDescription: 'it-1',
+                    validatorResults: [
+                        {
+                            isSuccess: false,
+                            errorMessage:
+                                'looks like this expect does nothing with: "without matcher"',
+                        },
+                    ],
+                },
+                {
+                    itDescription: 'it-2',
+                    validatorResults: [
+                        {
+                            errorMessage:
+                                'async test takes more than available 100ms',
+                            isSuccess: false,
+                        },
+                    ],
+                },
+            ],
+        });
 
-        expect(results).toEqual([
-            {
-                description: 'root-1',
-                testCaseResults: [
-                    {
-                        itDescription: 'it-1',
-                        validatorResults: [
-                            {
-                                isSuccess: false,
-                                errorMessage:
-                                    'looks like this expect does nothing with: "without matcher"',
-                            },
-                        ],
-                    },
-                    {
-                        itDescription: 'it-2',
-                        validatorResults: [
-                            {
-                                isSuccess: true,
-                                errorMessage: '',
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                description: 'child-2',
-                testCaseResults: [],
-            },
-            {
-                description: 'child-3',
-                testCaseResults: [
-                    {
-                        itDescription: 'it-3',
-                        validatorResults: [
-                            {
-                                isSuccess: false,
-                                errorMessage: 'expected "invalid" to be falsy',
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                description: 'child-4',
-                testCaseResults: [
-                    {
-                        itDescription: 'it-4',
-                        validatorResults: [
-                            {
-                                isSuccess: true,
-                                errorMessage: '',
-                            },
-                            {
-                                isSuccess: true,
-                                errorMessage: '',
-                            },
-                            {
-                                isSuccess: true,
-                                errorMessage: '',
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                description: 'root-5',
-                testCaseResults: [
-                    {
-                        itDescription: 'it-5',
-                        validatorResults: [
-                            {
-                                isSuccess: true,
-                                errorMessage: '',
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                description: 'child-6',
-                testCaseResults: [
-                    {
-                        itDescription: 'it-6',
-                        validatorResults: [
-                            {
-                                isSuccess: true,
-                                errorMessage: '',
-                            },
-                            {
-                                isSuccess: true,
-                                errorMessage: '',
-                            },
-                        ],
-                    },
-                ],
-            },
-        ]);
+        expect(child2).toEqual({
+            description: 'child-2',
+            testCaseResults: [],
+        });
+
+        expect(child3).toEqual({
+            description: 'child-3',
+            testCaseResults: [
+                {
+                    itDescription: 'it-3',
+                    validatorResults: [],
+                },
+            ],
+        });
+
+        expect(child4).toEqual({
+            description: 'child-4',
+            testCaseResults: [
+                {
+                    itDescription: 'it-4',
+                    validatorResults: [
+                        {
+                            isSuccess: true,
+                            errorMessage: '',
+                        },
+                        {
+                            isSuccess: true,
+                            errorMessage: '',
+                        },
+                        {
+                            isSuccess: true,
+                            errorMessage: '',
+                        },
+                    ],
+                },
+            ],
+        });
+
+        expect(root5).toEqual({
+            description: 'root-5',
+            testCaseResults: [
+                {
+                    itDescription: 'it-5',
+                    validatorResults: [
+                        {
+                            errorMessage: 'expected "invalid" to be falsy',
+                            isSuccess: false,
+                        },
+                        {
+                            isSuccess: true,
+                            errorMessage: '',
+                        },
+                    ],
+                },
+            ],
+        });
+
+        expect(child6).toEqual({
+            description: 'child-6',
+            testCaseResults: [
+                {
+                    itDescription: 'it-6',
+                    validatorResults: [
+                        {
+                            isSuccess: true,
+                            errorMessage: '',
+                        },
+                        {
+                            isSuccess: true,
+                            errorMessage: '',
+                        },
+                    ],
+                },
+            ],
+        });
     });
 });

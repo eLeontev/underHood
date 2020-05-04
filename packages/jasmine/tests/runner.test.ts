@@ -179,6 +179,7 @@ describe('Runner', () => {
     describe('#performTestAndReturnItsResult', () => {
         const index: any = 'index';
         const validatorResult: any = 'validatorResult';
+        const errorValidatorResult: any = 'errorValidatorResult';
         let testCase: any;
         let callback: any;
 
@@ -194,11 +195,14 @@ describe('Runner', () => {
             instance.setActiveTestCaseIndex = jest
                 .fn()
                 .mockName('setActiveTestCaseIndex');
+            instance.asyncCallbackHanlder = jest
+                .fn()
+                .mockName('asyncCallbackHanlder');
         });
 
         it('should set active test case index before call it', async () => {
             instance.setActiveTestCaseIndex.mockImplementation(() =>
-                expect(callback).not.toHaveBeenCalled()
+                expect(instance.asyncCallbackHanlder).not.toHaveBeenCalled()
             );
 
             await instance.performTestAndReturnItsResult(
@@ -208,13 +212,16 @@ describe('Runner', () => {
             );
 
             expect(instance.setActiveTestCaseIndex).toHaveBeenCalledWith(index);
-            expect(callback).toHaveBeenCalled();
+            expect(instance.asyncCallbackHanlder).toHaveBeenCalledWith(
+                callback,
+                context
+            );
         });
 
         it('should return result of validators with description of test case once test case is called', async () => {
-            callback.mockImplementation(() =>
-                testCase.validators.push({ validatorResult })
-            );
+            instance.asyncCallbackHanlder.mockImplementation((): void => {
+                testCase.validators.push({ validatorResult });
+            });
 
             const terstCaseValidatorsResult = await instance.performTestAndReturnItsResult(
                 context,
@@ -226,6 +233,69 @@ describe('Runner', () => {
                 itDescription: description,
                 validatorResults: [validatorResult],
             });
+        });
+
+        it('should return error result if async callback performs more than available timeframe', async () => {
+            instance.asyncCallbackHanlder.mockReturnValue(
+                Promise.resolve(errorValidatorResult)
+            );
+
+            const terstCaseValidatorsResult = await instance.performTestAndReturnItsResult(
+                context,
+                testCase,
+                index
+            );
+
+            expect(terstCaseValidatorsResult).toEqual({
+                itDescription: description,
+                validatorResults: [errorValidatorResult],
+            });
+        });
+    });
+
+    describe('#asyncCallbackHanlder', () => {
+        let callback: any;
+
+        beforeEach(() => {
+            callback = jest.fn().mockName('callback');
+        });
+
+        it('should return void promise if callback is sync', async () => {
+            expect(
+                await instance.asyncCallbackHanlder(callback, context)
+            ).toBeNull();
+            expect(callback).toHaveBeenCalled();
+        });
+
+        it('should return void promise even if callback retunns any values', async () => {
+            callback.mockReturnValue(true);
+            expect(
+                await instance.asyncCallbackHanlder(callback, context)
+            ).toBeNull();
+            expect(callback).toHaveBeenCalled();
+        });
+
+        it('should return void promise if callback is async but does not exceed time frame limit', async () => {
+            callback.mockReturnValue(
+                new Promise((res: any) => setTimeout(() => res(true), 50))
+            );
+            expect(
+                await instance.asyncCallbackHanlder(callback, context)
+            ).toBeNull();
+            expect(callback).toHaveBeenCalled();
+        });
+
+        it('should return time frame exceed error promise if callback takes more than available time frame', async () => {
+            callback.mockReturnValue(
+                new Promise((res: any) => setTimeout(() => res(true), 150))
+            );
+            expect(
+                await instance.asyncCallbackHanlder(callback, context)
+            ).toEqual({
+                isSuccess: false,
+                errorMessage: 'async test takes more than available 100ms',
+            });
+            expect(callback).toHaveBeenCalled();
         });
     });
 

@@ -13,30 +13,31 @@ export const getTestInstanceWithMockData = () => {
     const afeCallbackSecond = () => {};
     const afeCallbackThird = () => {};
 
-    const asyncMethod = () => Promise.resolve();
+    const asyncMethod = (delay: number) =>
+        new Promise((res) => setTimeout(res, delay));
 
     const itCallbackFirst = () => {
         instance.expect('without matcher');
     };
     const itCallbackSecond = async () => {
-        await asyncMethod();
         instance.expect('valid').toBeTruthy();
+        await asyncMethod(150);
     };
-    const itCallbackThird = () => {
-        instance.expect('invalid').toBeFalsy();
-    };
+    const itCallbackThird = () => {};
     const itCallbackFourth = async () => {
-        await asyncMethod();
         instance.expect(false).toBeFalsy();
+        await asyncMethod(30);
+
         instance.expect(undefined).toBeFalsy();
         instance.expect(null).toBeFalsy();
     };
     const itCallbackFifth = () => {
+        instance.expect('invalid').toBeFalsy();
         instance.expect('valid').toBeTruthy();
     };
     const itCallbackSixth = async () => {
         instance.expect(0).toBeFalsy();
-        await asyncMethod();
+        await asyncMethod(1);
         instance.expect('').toBeFalsy();
     };
 
