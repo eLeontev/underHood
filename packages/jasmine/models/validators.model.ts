@@ -1,10 +1,6 @@
-import {
-    ExpectedResult,
-    ActualResult,
-    ValidatorResult,
-} from './matchers.model';
+import { ExpectedResult, ActualResult } from './matchers.model';
 
 export type ValidatorMethod = (
     actualResult: ActualResult,
     ...expectedResults: Array<ExpectedResult>
-) => ValidatorResult;
+) => boolean;
