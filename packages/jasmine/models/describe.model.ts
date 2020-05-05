@@ -26,7 +26,13 @@ export interface Describers {
     [describerId: string]: Describer;
 }
 
-export interface NextDescriberArguments {
+export interface ParentMethods {
+    beforeEachList: CallbackList;
+    afterEachList: CallbackList;
+}
+
+export interface DescriberArguments {
     description: string;
     callback: Callback;
+    parentMethods: ParentMethods;
 }
