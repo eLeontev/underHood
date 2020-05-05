@@ -208,7 +208,7 @@ describe('Describe', () => {
             );
         });
 
-        it('#1 should set formed describer with parent bfe/afe methods', () => {
+        it('#29 should set formed describer with parent bfe/afe methods', () => {
             instance.initDescribe(describerArguments);
             const [[initDescriber]] = instance.setFormedDescriber.mock.calls;
             expect(initDescriber.beforeEachList).toEqual([parentBfeMethods]);

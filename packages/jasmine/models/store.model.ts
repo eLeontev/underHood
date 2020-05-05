@@ -1,4 +1,4 @@
-import { Describers, NextDescriberArguments } from './describe.model';
+import { Describers, DescriberArguments } from './describe.model';
 
 export interface Store {
     activeDescriberId: string;
@@ -6,5 +6,5 @@ export interface Store {
     describers: Describers;
     rootDescribersId: Array<string>;
     activeTestCaseIndex: number;
-    nextDescriberArguments: Array<NextDescriberArguments>;
+    nextDescriberArguments: Array<DescriberArguments>;
 }
