@@ -1,29 +1,37 @@
 import uniqueid from 'lodash.uniqueid';
 
 import { Callback, DescribeCore } from './models/jasmine.model';
-import { NextDescriberArguments, Describer } from './models/describe.model';
+import {
+    DescriberArguments,
+    Describer,
+    ParentMethods,
+} from './models/describe.model';
 import { Store } from './models/store.model';
 
 export class Describe implements DescribeCore {
     constructor(private store: Store) {}
 
     public describe = (description: string, callback: Callback): void => {
-        this.describeHandler(description, callback);
+        this.describeHandler({
+            description,
+            callback,
+            parentMethods: this.getEmptyParentMethods(),
+        });
     };
 
     private childDescribe(
-        description: string,
-        callback: Callback,
+        describerArguments: DescriberArguments,
         describerId: string
     ): void {
-        this.describeHandler(description, callback, describerId);
+        this.describeHandler(describerArguments, describerId);
     }
 
     private describeHandler(
-        description: string,
-        callback: Callback,
+        describerArguments: DescriberArguments,
         describerId?: string
     ): void {
+        const { description, callback } = describerArguments;
+
         const {
             isDescriberFormingInProgress,
             nextDescriberArguments,
@@ -32,20 +40,30 @@ export class Describe implements DescribeCore {
         if (isDescriberFormingInProgress) {
             this.store.nextDescriberArguments = [
                 ...nextDescriberArguments,
-                { description, callback },
+                {
+                    description,
+                    callback,
+                    parentMethods: this.getEmptyParentMethods(),
+                },
             ];
 
             return;
         }
 
-        this.beforeCallbackCall(description, describerId);
+        this.beforeCallbackCall(describerArguments, describerId);
         callback();
         this.afterCallbackCall();
     }
 
-    private beforeCallbackCall(description: string, describerId: string): void {
+    private beforeCallbackCall(
+        describerArguments: DescriberArguments,
+        describerId: string
+    ): void {
         const { store } = this;
-        store.activeDescriberId = this.initDescribe(description, describerId);
+        store.activeDescriberId = this.initDescribe(
+            describerArguments,
+            describerId
+        );
         store.isDescriberFormingInProgress = true;
     }
 
@@ -59,12 +77,15 @@ export class Describe implements DescribeCore {
         this.performChildrenDescribers(activeDescriberId);
     }
 
-    private initDescribe(description: string, describerId?: string): string {
+    private initDescribe(
+        { description, parentMethods }: DescriberArguments,
+        describerId?: string
+    ): string {
         const id = describerId || uniqueid('root-');
         const describer: Describer = {
             description,
-            beforeEachList: [],
-            afterEachList: [],
+            beforeEachList: [...parentMethods.beforeEachList],
+            afterEachList: [...parentMethods.afterEachList],
             testCases: [],
             childrenDescribersId: [],
             context: {},
@@ -80,12 +101,21 @@ export class Describe implements DescribeCore {
         const nextDescriberArguments = [...this.store.nextDescriberArguments];
         this.store.nextDescriberArguments = [];
 
+        const parentMethods = this.getParentMethods(describerId);
+
         nextDescriberArguments.forEach(
-            ({ description, callback }: NextDescriberArguments) => {
+            ({ description, callback }: DescriberArguments) => {
                 const childDescriberId = uniqueid('child-');
 
                 this.addChildDesriberId(describerId, childDescriberId);
-                this.childDescribe(description, callback, childDescriberId);
+                this.childDescribe(
+                    {
+                        description,
+                        callback,
+                        parentMethods,
+                    },
+                    childDescriberId
+                );
             }
         );
     }
@@ -111,11 +141,33 @@ export class Describe implements DescribeCore {
         describerId: string,
         childDescriberId: string
     ): void {
-        const describer = this.store.describers[describerId];
+        const describer = this.getDescriberById(describerId);
 
         describer.childrenDescribersId = [
             ...describer.childrenDescribersId,
             childDescriberId,
         ];
+    }
+
+    private getParentMethods(describerId: string): ParentMethods {
+        const { afterEachList, beforeEachList } = this.getDescriberById(
+            describerId
+        );
+
+        return {
+            afterEachList: [...afterEachList],
+            beforeEachList: [...beforeEachList],
+        };
+    }
+
+    private getEmptyParentMethods(): ParentMethods {
+        return {
+            afterEachList: [],
+            beforeEachList: [],
+        };
+    }
+
+    private getDescriberById(describerId: string): Describer {
+        return this.store.describers[describerId];
     }
 }

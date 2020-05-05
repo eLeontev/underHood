@@ -11,6 +11,7 @@ describe('Describe', () => {
     const description = 'description';
     const describerId = 'describerId';
     const activeDescriberId = 'activeDescriberId';
+    const parentMethods = 'parentMethods';
 
     beforeEach(() => {
         instance = new Describe({ ...store });
@@ -23,28 +24,35 @@ describe('Describe', () => {
 
     describe('#describe', () => {
         beforeEach(() => {
-            instance.describeHandler = jest.fn();
+            instance.describeHandler = jest.fn().mockName('describeHandler');
+            instance.getEmptyParentMethods = jest
+                .fn()
+                .mockName('getEmptyParentMethods')
+                .mockReturnValue(parentMethods);
         });
 
         it('should call #describeHandler with passed description and calback', () => {
             instance.describe(description, callback);
-            expect(instance.describeHandler).toHaveBeenCalledWith(
+            expect(instance.describeHandler).toHaveBeenCalledWith({
                 description,
-                callback
-            );
+                callback,
+                parentMethods,
+            });
+            expect(instance.getEmptyParentMethods).toHaveBeenCalled();
         });
     });
 
     describe('#childDescribe', () => {
+        const describerArguments: any = 'describerArguments';
+
         beforeEach(() => {
             instance.describeHandler = jest.fn();
         });
 
-        it('should call #describeHandler with passed description, calback and describerId', () => {
-            instance.childDescribe(description, callback, describerId);
+        it('should call #describeHandler with passed describer arguments and describerId', () => {
+            instance.childDescribe(describerArguments, describerId);
             expect(instance.describeHandler).toHaveBeenCalledWith(
-                description,
-                callback,
+                describerArguments,
                 describerId
             );
         });
@@ -52,27 +60,48 @@ describe('Describe', () => {
 
     describe('#describeHandler', () => {
         const isDescriberFormingInProgress = 'isDescriberFormingInProgress';
+        let describerArguments: any;
 
         beforeEach(() => {
+            describerArguments = {
+                description,
+                callback,
+            };
+
             instance.store.nextDescriberArguments = [
                 isDescriberFormingInProgress,
             ];
             instance.store.isDescriberFormingInProgress = false;
             instance.initDescribe = jest.fn();
 
-            instance.performChildrenDescribers = jest.fn();
-            instance.beforeCallbackCall = jest.fn();
-            instance.afterCallbackCall = jest.fn();
+            instance.performChildrenDescribers = jest
+                .fn()
+                .mockName('performChildrenDescribers');
+            instance.beforeCallbackCall = jest
+                .fn()
+                .mockName('beforeCallbackCall');
+            instance.afterCallbackCall = jest
+                .fn()
+                .mockName('afterCallbackCall');
+            instance.getEmptyParentMethods = jest
+                .fn()
+                .mockName('getEmptyParentMethods')
+                .mockReturnValue(parentMethods);
         });
 
         it('should store passed description and callback if previous description forming not completed yet', () => {
             instance.store.isDescriberFormingInProgress = true;
-            instance.describeHandler(description, callback);
+            instance.describeHandler(describerArguments);
             expect(instance.initDescribe).not.toHaveBeenCalled();
             expect(instance.store.nextDescriberArguments).toEqual([
                 isDescriberFormingInProgress,
-                { description, callback },
+                {
+                    description,
+                    callback,
+                    parentMethods,
+                },
             ]);
+            expect(instance.getEmptyParentMethods).toHaveBeenCalled();
         });
 
         it('should call before/after methods to hande callback with valid state', () => {
@@ -84,12 +113,12 @@ describe('Describe', () => {
                 expect(instance.afterCallbackCall).not.toHaveBeenCalled();
             });
 
-            instance.describeHandler(description, callback, describerId);
+            instance.describeHandler(describerArguments, describerId);
 
             expect(callback).toHaveBeenCalled();
             expect(instance.afterCallbackCall).toHaveBeenCalled();
             expect(instance.beforeCallbackCall).toHaveBeenLastCalledWith(
-                description,
+                describerArguments,
                 describerId
             );
         });
@@ -131,17 +160,29 @@ describe('Describe', () => {
     });
 
     describe('#initDescribe', () => {
+        let describerArguments: any;
+
+        const parentBfeMethods = 'parentBfeMethods';
+        const parentAfeMethods = 'parentAfeMethods';
+
         beforeEach(() => {
+            describerArguments = {
+                description,
+                parentMethods: {
+                    beforeEachList: [parentBfeMethods],
+                    afterEachList: [parentAfeMethods],
+                },
+            };
             instance.setFormedDescriber = jest.fn();
         });
 
         it('should set formed describer with with its id and definition desriber as child type if id is passed', () => {
-            instance.initDescribe(description, describerId);
+            instance.initDescribe(describerArguments, describerId);
             expect(instance.setFormedDescriber).toHaveBeenCalledWith(
                 {
                     description,
-                    beforeEachList: [],
-                    afterEachList: [],
+                    beforeEachList: [parentBfeMethods],
+                    afterEachList: [parentAfeMethods],
                     testCases: [],
                     childrenDescribersId: [],
                     context: {},
@@ -152,12 +193,12 @@ describe('Describe', () => {
         });
 
         it('should set formed describer with with its id and definition desriber as root type if id is not passed', () => {
-            instance.initDescribe(description);
+            instance.initDescribe(describerArguments);
             expect(instance.setFormedDescriber).toHaveBeenCalledWith(
                 {
                     description,
-                    beforeEachList: [],
-                    afterEachList: [],
+                    beforeEachList: [parentBfeMethods],
+                    afterEachList: [parentAfeMethods],
                     testCases: [],
                     childrenDescribersId: [],
                     context: {},
@@ -166,6 +207,13 @@ describe('Describe', () => {
                 true
             );
         });
+
+        it('#1 should set formed describer with parent bfe/afe methods', () => {
+            instance.initDescribe(describerArguments);
+            const [[initDescriber]] = instance.setFormedDescriber.mock.calls;
+            expect(initDescriber.beforeEachList).toEqual([parentBfeMethods]);
+            expect(initDescriber.afterEachList).toEqual([parentAfeMethods]);
+        });
     });
 
     describe('#performChildrenDescribers', () => {
@@ -173,9 +221,15 @@ describe('Describe', () => {
 
         beforeEach(() => {
             instance.store.nextDescriberArguments = [{ description, callback }];
-            instance.childDescribe = jest.fn();
-            instance.addChildDesriberId = jest.fn();
-            instance.childDescribe = jest.fn();
+            instance.childDescribe = jest.fn().mockName('childDescribe');
+            instance.addChildDesriberId = jest
+                .fn()
+                .mockName('addChildDesriberId');
+            instance.childDescribe = jest.fn().mockName('childDescribe');
+            instance.getParentMethods = jest
+                .fn()
+                .mockName('getParentMethods')
+                .mockReturnValue(parentMethods);
         });
 
         it('should clean up next describerArguments', () => {
@@ -186,9 +240,8 @@ describe('Describe', () => {
         it('should call #childDescribe for each children', () => {
             instance.performChildrenDescribers(parentDescriberId, describerId);
             expect(instance.childDescribe).toHaveBeenCalledWith(
-                description,
-                callback,
-                'child-3'
+                { description, callback, parentMethods },
+                'child-4'
             );
         });
 
@@ -199,7 +252,7 @@ describe('Describe', () => {
             instance.performChildrenDescribers(parentDescriberId, describerId);
             expect(instance.addChildDesriberId).toHaveBeenCalledWith(
                 parentDescriberId,
-                'child-4'
+                'child-5'
             );
         });
     });
@@ -231,11 +284,19 @@ describe('Describe', () => {
     });
 
     describe('#addChildDesriberId', () => {
-        it('should add child describerId to list of existed children id', () => {
-            const existedChildId = 'existedChildId';
-            const childDescriberId = 'childDescriberId';
-            const describer = { childrenDescribersId: [existedChildId] };
+        let describer: any;
+        const existedChildId = 'existedChildId';
+        const childDescriberId = 'childDescriberId';
 
+        beforeEach(() => {
+            describer = { childrenDescribersId: [existedChildId] };
+            instance.getDescriberById = jest
+                .fn()
+                .mockName('getDescriberById')
+                .mockReturnValue(describer);
+        });
+
+        it('should add child describerId to list of existed children id', () => {
             instance.store.describers[describerId] = describer;
 
             instance.addChildDesriberId(describerId, childDescriberId);
@@ -244,6 +305,48 @@ describe('Describe', () => {
                 existedChildId,
                 childDescriberId,
             ]);
+            expect(instance.getDescriberById).toHaveBeenCalledWith(describerId);
+        });
+    });
+
+    describe('#getParentMethods', () => {
+        const listOfParentBfeMethods: any = 'listOfParentBfeMethods';
+        const listOfParentAfeMethods: any = 'listOfParentAfeMethods';
+
+        beforeEach(() => {
+            describer = {
+                afterEachList: [listOfParentBfeMethods],
+                beforeEachList: [listOfParentAfeMethods],
+            };
+            instance.getDescriberById = jest
+                .fn()
+                .mockName('getDescriberById')
+                .mockReturnValue(describer);
+        });
+
+        it('should return parent methods based on passed describer id', () => {
+            expect(instance.getParentMethods(describerId)).toEqual({
+                afterEachList: [listOfParentBfeMethods],
+                beforeEachList: [listOfParentAfeMethods],
+            });
+            expect(instance.getDescriberById).toHaveBeenCalledWith(describerId);
+        });
+    });
+
+    describe('#getEmptyParentMethods', () => {
+        it('should return emty parent methods', () => {
+            expect(instance.getEmptyParentMethods()).toEqual({
+                afterEachList: [],
+                beforeEachList: [],
+            });
+        });
+    });
+
+    describe('#getDescriberById', () => {
+        it('should return describer from store based on passed describer id', () => {
+            const describer: any = 'describer';
+            instance.store.describers[describerId] = describer;
+            expect(instance.getDescriberById(describerId)).toBe(describer);
         });
     });
 });
