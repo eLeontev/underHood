@@ -13,15 +13,22 @@ export const getTestInstanceWithMockData = () => {
     let spyWithReturnedvalue: any;
     let spyWithMockImplementation: any;
 
+    let initialValueBfeFirst: number;
+    let initialValueBfeSecond: number;
+    let initialValueBfeThird: number;
+
     const bfeCallbackFirst = () => {
+        initialValueBfeFirst = 10;
         simpleSpy = createSpy('simpleSpy');
     };
     const bfeCallbackSecond = () => {
+        initialValueBfeSecond = initialValueBfeFirst + 10;
         spyWithReturnedvalue = createSpy('spyWithReturnedvalue').returnValue(
             returnValue
         );
     };
     const bfeCallbackThird = () => {
+        initialValueBfeThird = initialValueBfeSecond + 10;
         spyWithMockImplementation = createSpy(
             'spyWithMockImplementation'
         ).callFake((arrayOfWords: Array<string>) =>
@@ -51,6 +58,7 @@ export const getTestInstanceWithMockData = () => {
                 spyWithMockImplementation(['it', ' ', 'w', 'o', 'r', 'k', 's'])
             )
             .toBeFalsy();
+        instance.expect(initialValueBfeThird).toBeFalsy();
     };
     const itCallbackFourth = async () => {
         instance.expect(false).toBeFalsy();

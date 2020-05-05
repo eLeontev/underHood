@@ -75,7 +75,7 @@ describe('Integration tests: Describe', () => {
         it('"child-2": should form valid relationship structure of describers', () => {
             expect(instance.store.describers['child-2']).toEqual({
                 description: 'child-2',
-                beforeEachList: [],
+                beforeEachList: [bfeCallbackFirst, bfeCallbackSecond],
                 afterEachList: [afeCallbackFirst],
                 testCases: [],
                 childrenDescribersId: ['child-3'],
@@ -86,8 +86,12 @@ describe('Integration tests: Describe', () => {
         it('"child-3": should form valid relationship structure of describers', () => {
             expect(instance.store.describers['child-3']).toEqual({
                 description: 'child-3',
-                beforeEachList: [bfeCallbackThird],
-                afterEachList: [afeCallbackSecond],
+                beforeEachList: [
+                    bfeCallbackFirst,
+                    bfeCallbackSecond,
+                    bfeCallbackThird,
+                ],
+                afterEachList: [afeCallbackFirst, afeCallbackSecond],
                 testCases: [
                     {
                         it: { description: 'it-3', callback: itCallbackThird },
@@ -102,7 +106,7 @@ describe('Integration tests: Describe', () => {
         it('"child-4": should form valid relationship structure of describers', () => {
             expect(instance.store.describers['child-4']).toEqual({
                 description: 'child-4',
-                beforeEachList: [],
+                beforeEachList: [bfeCallbackFirst, bfeCallbackSecond],
                 afterEachList: [],
                 testCases: [
                     {
@@ -221,6 +225,10 @@ describe('results validation', () => {
                     validatorResults: [
                         {
                             errorMessage: 'expected "it works" to be falsy',
+                            isSuccess: false,
+                        },
+                        {
+                            errorMessage: 'expected 30 to be falsy',
                             isSuccess: false,
                         },
                     ],
