@@ -10,6 +10,8 @@ import { Validators } from './validators';
 import { ValidatorMethod } from './models/validators.model';
 import { errorMessages, getErrorMessage } from './error.messages';
 import { GetErrorMessage } from './models/error.messages.model';
+import { GetActualResultWithSpy } from './models/utils.model';
+import { getActualResultWithSpy } from './utils';
 
 export enum MatchersTypes {
     testTimeFrameDurationExeeded = 'testTimeFrameDurationExeeded',
@@ -22,6 +24,7 @@ export class Matchers implements MatchersCore {
     public not: MatchersCore;
 
     private getErrorMessage: GetErrorMessage = getErrorMessage;
+    private getActualResultWithSpy: GetActualResultWithSpy = getActualResultWithSpy;
 
     public toBeFalsy: MatcherMethod;
     public toBeTruthy: MatcherMethod;
@@ -70,7 +73,7 @@ export class Matchers implements MatchersCore {
     }
 
     private getActualResult(): ActualResult {
-        return this.validator.actualResult;
+        return this.getActualResultWithSpy(this.validator.actualResult);
     }
 
     private setValidatorResult(validatorResult: ValidatorResult): void {
