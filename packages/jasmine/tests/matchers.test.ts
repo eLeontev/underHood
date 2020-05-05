@@ -132,6 +132,22 @@ describe('Matchers', () => {
         it('should return actual result storied in valdiator', () => {
             expect(matchers.getActualResult()).toBe(actualResult);
         });
+
+        it('should return actual result with possiblitiy to return result of spy', () => {
+            const actualResultWithSpyValidation =
+                'actualResultWithSpyValidation';
+            matchers.getActualResultWithSpy = jest
+                .fn()
+                .mockName('getActualResultWithSpy')
+                .mockReturnValue(actualResultWithSpyValidation);
+
+            expect(matchers.getActualResult()).toBe(
+                actualResultWithSpyValidation
+            );
+            expect(matchers.getActualResultWithSpy).toHaveBeenCalledWith(
+                actualResult
+            );
+        });
     });
 
     describe('#setValidatorResult', () => {

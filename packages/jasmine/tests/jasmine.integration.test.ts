@@ -185,6 +185,14 @@ describe('results validation', () => {
                             errorMessage:
                                 'looks like this expect does nothing with: "without matcher"',
                         },
+                        {
+                            errorMessage: '',
+                            isSuccess: true,
+                        },
+                        {
+                            errorMessage: 'expected "returnValue" to be falsy',
+                            isSuccess: false,
+                        },
                     ],
                 },
                 {
@@ -210,7 +218,12 @@ describe('results validation', () => {
             testCaseResults: [
                 {
                     itDescription: 'it-3',
-                    validatorResults: [],
+                    validatorResults: [
+                        {
+                            errorMessage: 'expected "it works" to be falsy',
+                            isSuccess: false,
+                        },
+                    ],
                 },
             ],
         });

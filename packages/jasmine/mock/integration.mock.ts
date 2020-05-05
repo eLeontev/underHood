@@ -1,13 +1,33 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function */
 
 import { Jasmine } from '../jasmine';
+import { Spy } from '../spy';
 
 export const getTestInstanceWithMockData = () => {
     const instance = new Jasmine();
+    const { createSpy } = new Spy();
 
-    const bfeCallbackFirst = () => {};
-    const bfeCallbackSecond = () => {};
-    const bfeCallbackThird = () => {};
+    const returnValue = 'returnValue';
+
+    let simpleSpy: any;
+    let spyWithReturnedvalue: any;
+    let spyWithMockImplementation: any;
+
+    const bfeCallbackFirst = () => {
+        simpleSpy = createSpy('simpleSpy');
+    };
+    const bfeCallbackSecond = () => {
+        spyWithReturnedvalue = createSpy('spyWithReturnedvalue').returnValue(
+            returnValue
+        );
+    };
+    const bfeCallbackThird = () => {
+        spyWithMockImplementation = createSpy(
+            'spyWithMockImplementation'
+        ).callFake((arrayOfWords: Array<string>) =>
+            arrayOfWords.reduce((resultValue, word) => resultValue + word)
+        );
+    };
 
     const afeCallbackFirst = () => {};
     const afeCallbackSecond = () => {};
@@ -18,12 +38,20 @@ export const getTestInstanceWithMockData = () => {
 
     const itCallbackFirst = () => {
         instance.expect('without matcher');
+        instance.expect(simpleSpy()).toBeFalsy();
+        instance.expect(spyWithReturnedvalue()).toBeFalsy();
     };
     const itCallbackSecond = async () => {
         instance.expect('valid').toBeTruthy();
         await asyncMethod(150);
     };
-    const itCallbackThird = () => {};
+    const itCallbackThird = () => {
+        instance
+            .expect(
+                spyWithMockImplementation(['it', ' ', 'w', 'o', 'r', 'k', 's'])
+            )
+            .toBeFalsy();
+    };
     const itCallbackFourth = async () => {
         instance.expect(false).toBeFalsy();
         await asyncMethod(30);
