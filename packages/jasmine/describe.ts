@@ -11,6 +11,11 @@ import { Store } from './models/store.model';
 export class Describe implements DescribeCore {
     constructor(private store: Store) {}
 
+    public xdescribe = (description: string): void => {
+        const { store } = this;
+        store.inactiveDescribers = [...store.inactiveDescribers, description];
+    };
+
     public describe = (description: string, callback: Callback): void => {
         this.describeHandler({
             description,

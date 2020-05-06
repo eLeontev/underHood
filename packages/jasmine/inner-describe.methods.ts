@@ -5,6 +5,11 @@ import { Store } from './models/store.model';
 export class InnerDescribeMethods implements InnerDescribeMethodsCore {
     constructor(private store: Store) {}
 
+    public xit = (description: string): void => {
+        const { store } = this;
+        store.inactiveTestCases = [...store.inactiveTestCases, description];
+    };
+
     public beforeEach = (callback: Callback): void => {
         const describer = this.getActiveDescriber();
         describer.beforeEachList = [...describer.beforeEachList, callback];
