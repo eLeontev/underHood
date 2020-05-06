@@ -21,22 +21,34 @@ describe('Runner', () => {
     describe('#run', () => {
         const rootDescribersId = 'rootDescribersId';
         const performDescribersResult = 'performDescribersResult';
+        const disabledDescriber = 'disabledDescriber';
+        const disabledTestCase = 'disabledTestCase';
 
         beforeEach(() => {
-            instance.performDecribers = jest.fn().mockName('performDecribers');
+            instance.performDecribers = jest
+                .fn()
+                .mockName('performDecribers')
+                .mockReturnValue(performDescribersResult);
             instance.store.rootDescribersId = rootDescribersId;
+
+            instance.store.inactiveDescribers = [disabledDescriber];
+            instance.store.inactiveTestCases = [disabledTestCase];
         });
 
-        it('should return async list of results for all tests', async () => {
-            instance.performDecribers.mockReturnValue(performDescribersResult);
+        it('should async return list of results for all tests', async () => {
+            const { testsResults } = await instance.run();
 
-            const results = await instance.run();
-
-            expect(results).toBe(performDescribersResult);
+            expect(testsResults).toBe(performDescribersResult);
             expect(instance.performDecribers).toHaveBeenCalledWith(
                 rootDescribersId,
                 []
             );
+        });
+
+        it('should return result including tests cases and description of disabled describers and test cases', async () => {
+            const { disabledMethods } = await instance.run();
+            expect(disabledMethods.describers).toEqual([disabledDescriber]);
+            expect(disabledMethods.testCases).toEqual([disabledTestCase]);
         });
     });
 

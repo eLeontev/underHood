@@ -13,14 +13,26 @@ import {
     TestsResults,
     TestCaseResult,
     TestCaseResults,
+    TestResultsWithDisabledMethods,
 } from './models/runner.model';
 import { Store } from './models/store.model';
 
 export class Runner {
     constructor(private store: Store) {}
 
-    public run = async (): Promise<TestsResults> => {
-        return await this.performDecribers(this.store.rootDescribersId, []);
+    public run = async (): Promise<TestResultsWithDisabledMethods> => {
+        const testsResults = await this.performDecribers(
+            this.store.rootDescribersId,
+            []
+        );
+
+        return {
+            testsResults,
+            disabledMethods: {
+                describers: [...this.store.inactiveDescribers],
+                testCases: [...this.store.inactiveTestCases],
+            },
+        };
     };
 
     private async performDecribers(
