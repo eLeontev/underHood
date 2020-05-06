@@ -34,5 +34,5 @@ export interface ParentMethods {
 export interface DescriberArguments {
     description: string;
     callback: Callback;
-    parentMethods: ParentMethods;
+    parentMethods?: ParentMethods;
 }
