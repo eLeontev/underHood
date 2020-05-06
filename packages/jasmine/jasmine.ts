@@ -20,14 +20,18 @@ export class Jasmine implements JasmineCore {
         describers: {},
         rootDescribersId: [],
         nextDescriberArguments: [],
+        inactiveDescribers: [],
+        inactiveTestCases: [],
     };
 
     public describe: DescribeModel;
+    public xdescribe: DescribeModel;
 
     public beforeEach: BeforeAfterEachModel;
     public afterEach: BeforeAfterEachModel;
 
     public it: ItModel;
+    public xit: ItModel;
 
     public expect: ExpectModel;
 
@@ -36,6 +40,7 @@ export class Jasmine implements JasmineCore {
     constructor() {
         const describeInstance = new Describe(this.store);
         this.describe = describeInstance.describe;
+        this.xdescribe = describeInstance.xdescribe;
 
         const innerDescribeMethodsInstance = new InnerDescribeMethods(
             this.store
@@ -44,6 +49,7 @@ export class Jasmine implements JasmineCore {
         this.beforeEach = innerDescribeMethodsInstance.beforeEach;
 
         this.it = innerDescribeMethodsInstance.it;
+        this.xit = innerDescribeMethodsInstance.xit;
 
         const expectInstance = new Expect(this.store);
         this.expect = expectInstance.expect;
