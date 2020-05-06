@@ -22,6 +22,20 @@ describe('Describe', () => {
         describer = 'describer';
     });
 
+    describe('#xdescribe', () => {
+        it('should store disabled describer description in state', () => {
+            const disabledDescriberDescription = 'disabledDescriberDescription';
+            instance.store.inactiveDescribers = [disabledDescriberDescription];
+
+            instance.xdescribe(description, callback);
+
+            expect(instance.store.inactiveDescribers).toEqual([
+                disabledDescriberDescription,
+                description,
+            ]);
+        });
+    });
+
     describe('#describe', () => {
         beforeEach(() => {
             instance.describeHandler = jest.fn().mockName('describeHandler');

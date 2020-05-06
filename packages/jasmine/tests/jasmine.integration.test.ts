@@ -176,8 +176,8 @@ describe('results validation', () => {
     });
 
     it('should return valid results even for async it cases', async () => {
-        const results = await instance.run();
-        const [root1, child2, child3, child4, root5, child6] = results;
+        const { testsResults } = await instance.run();
+        const [root1, child2, child3, child4, root5, child6] = testsResults;
         expect(root1).toEqual({
             description: 'root-1',
             testCaseResults: [

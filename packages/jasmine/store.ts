@@ -7,4 +7,6 @@ export const store: Store = {
     rootDescribersId: [],
     activeTestCaseIndex: null,
     nextDescriberArguments: [],
+    inactiveDescribers: [],
+    inactiveTestCases: [],
 };

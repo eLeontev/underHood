@@ -27,6 +27,20 @@ describe('InnerDescribeMethods', () => {
         };
     });
 
+    describe('#xit', () => {
+        it('should store disabled test case description in state', () => {
+            const disabledTestCaseDescription = 'disabledTestCaseDescription';
+            instance.store.inactiveTestCases = [disabledTestCaseDescription];
+
+            instance.xit(description, callback);
+
+            expect(instance.store.inactiveTestCases).toEqual([
+                disabledTestCaseDescription,
+                description,
+            ]);
+        });
+    });
+
     describe('#beforeEach', () => {
         beforeEach(() => {
             instance.getActiveDescriber = jest

@@ -11,3 +11,13 @@ export interface TestResults {
     testCaseResults: Array<TestCaseResult>;
 }
 export type TestsResults = Array<TestResults>;
+
+export interface DisabledMethods {
+    describers: Array<string>;
+    testCases: Array<string>;
+}
+
+export interface TestResultsWithDisabledMethods {
+    testsResults: TestsResults;
+    disabledMethods: DisabledMethods;
+}
