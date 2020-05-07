@@ -8,6 +8,11 @@ import {
     toBeTruthy,
     getErrorMessage,
     testTimeFrameDurationExeeded,
+    toBe,
+    toEqual,
+    toHaveBeenCalled,
+    toHaveBeenCalledWith,
+    expectSpy,
 } from '../error.messages';
 
 describe('#getNotMessage', () => {
@@ -28,10 +33,16 @@ describe('errorMessages', () => {
         expect(errorMessages.expectDoNothing).toBe(expectDoNothing);
         expect(errorMessages.toBeFalsy).toBe(toBeFalsy);
         expect(errorMessages.toBeTruthy).toBe(toBeTruthy);
+        expect(errorMessages.toBe).toBe(toBe);
+        expect(errorMessages.toEqual).toBe(toEqual);
+        expect(errorMessages.toHaveBeenCalled).toBe(toHaveBeenCalled);
+        expect(errorMessages.toHaveBeenCalledWith).toBe(toHaveBeenCalledWith);
+        expect(errorMessages.expectSpy).toBe(expectSpy);
     });
 });
 
 const actualResult = 'actualResult';
+const expectedResult = 'expectedResult';
 
 describe('#testTimeFrameDurationExeeded', () => {
     it('should return valid message based on passed value', () => {
@@ -72,6 +83,73 @@ describe('#toBeTruthy', () => {
         );
         expect(toBeTruthy(true, actualResult)).toBe(
             `expected ${JSON.stringify(actualResult)} not to be truthy`
+        );
+    });
+});
+
+describe('#toBe', () => {
+    it('should return valid message based on passed value', () => {
+        expect(toBe(false, actualResult, [expectedResult])).toBe(
+            `expected ${JSON.stringify(actualResult)} to be ${JSON.stringify(
+                expectedResult
+            )}`
+        );
+        expect(toBe(true, actualResult, [expectedResult])).toBe(
+            `expected ${JSON.stringify(
+                actualResult
+            )} not to be ${JSON.stringify(expectedResult)}`
+        );
+    });
+});
+
+describe('#toEqual', () => {
+    it('should return valid message based on passed value', () => {
+        expect(toEqual(false, actualResult, [expectedResult])).toBe(
+            `expected ${JSON.stringify(actualResult)} to equal ${JSON.stringify(
+                expectedResult
+            )}`
+        );
+        expect(toEqual(true, actualResult, [expectedResult])).toBe(
+            `expected ${JSON.stringify(
+                actualResult
+            )} not to equal ${JSON.stringify(expectedResult)}`
+        );
+    });
+});
+
+describe('#toHaveBeenCalled', () => {
+    it('should return valid message based on passed value', () => {
+        expect(toHaveBeenCalled(false, actualResult)).toBe(
+            `expected ${JSON.stringify(actualResult)} to have been called`
+        );
+        expect(toHaveBeenCalled(true, actualResult)).toBe(
+            `expected ${JSON.stringify(actualResult)} not to have been called`
+        );
+    });
+});
+
+describe('#toHaveBeenCalledWith', () => {
+    it('should return valid message based on passed value', () => {
+        expect(toHaveBeenCalledWith(false, actualResult, expectedResult)).toBe(
+            `expected ${JSON.stringify(
+                actualResult
+            )} to have been called with ${JSON.stringify([expectedResult])}`
+        );
+        expect(toHaveBeenCalledWith(true, actualResult, expectedResult)).toBe(
+            `expected ${JSON.stringify(
+                actualResult
+            )} not to have been called with ${JSON.stringify([expectedResult])}`
+        );
+    });
+});
+
+describe('#expectSpy', () => {
+    it('should return valid message based on passed value', () => {
+        expect(expectSpy(false, actualResult)).toBe(
+            `expected spy but got ${JSON.stringify(actualResult)}`
+        );
+        expect(expectSpy(true, actualResult)).toBe(
+            `expected spy but got ${JSON.stringify(actualResult)}`
         );
     });
 });
@@ -122,10 +200,8 @@ describe('#getErrorMessage', () => {
                 expectedResult
             )
         ).toBe(errorMessage);
-        expect(errorMessageCallback).toHaveBeenCalledWith(
-            true,
-            actualResult,
-            expectedResult
-        );
+        expect(errorMessageCallback).toHaveBeenCalledWith(true, actualResult, [
+            expectedResult,
+        ]);
     });
 });

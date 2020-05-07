@@ -35,11 +35,56 @@ export const toBeTruthy: ErrorMessageCallback = (
         isNot
     )}to be truthy`;
 
+export const toBe: ErrorMessageCallback = (
+    isNot: boolean,
+    actualResult: ActualResult,
+    [expectedResult]: Array<ExpectedResult>
+) =>
+    `expected ${JSON.stringify(actualResult)}${getNotMessage(
+        isNot
+    )}to be ${JSON.stringify(expectedResult)}`;
+
+export const toEqual: ErrorMessageCallback = (
+    isNot: boolean,
+    actualResult: ActualResult,
+    [expectedResult]: Array<ExpectedResult>
+) =>
+    `expected ${JSON.stringify(actualResult)}${getNotMessage(
+        isNot
+    )}to equal ${JSON.stringify(expectedResult)}`;
+
+export const toHaveBeenCalled: ErrorMessageCallback = (
+    isNot: boolean,
+    actualResult: ActualResult
+) =>
+    `expected ${JSON.stringify(actualResult)}${getNotMessage(
+        isNot
+    )}to have been called`;
+
+export const toHaveBeenCalledWith: ErrorMessageCallback = (
+    isNot: boolean,
+    actualResult: ActualResult,
+    ...expectedResult: Array<ExpectedResult>
+) =>
+    `expected ${JSON.stringify(actualResult)}${getNotMessage(
+        isNot
+    )}to have been called with ${JSON.stringify(expectedResult)}`;
+
+export const expectSpy: ErrorMessageCallback = (
+    isNot: boolean,
+    actualResult: ActualResult
+) => `expected spy but got ${JSON.stringify(actualResult)}`;
+
 export const errorMessages: ErrorMessages = {
+    expectSpy,
     testTimeFrameDurationExeeded,
     expectDoNothing,
     toBeFalsy,
     toBeTruthy,
+    toBe,
+    toEqual,
+    toHaveBeenCalled,
+    toHaveBeenCalledWith,
 };
 
 export const getErrorMessage: GetErrorMessage = (
@@ -47,6 +92,6 @@ export const getErrorMessage: GetErrorMessage = (
     errorMessageCallback: ErrorMessageCallback,
     isNot: boolean,
     actualResult: ActualResult,
-    expectedResult?: ExpectedResult
+    ...expectedResult: Array<ExpectedResult>
 ): string =>
     isSuccess ? '' : errorMessageCallback(isNot, actualResult, expectedResult);
