@@ -100,7 +100,8 @@ describe('Matchers', () => {
                 isSuccess,
                 expectDoNothing,
                 false,
-                actualResult
+                actualResult,
+                ...expectedResults
             );
             expect(matchers.setValidatorResult).toHaveBeenCalledWith({
                 isSuccess,
@@ -119,7 +120,8 @@ describe('Matchers', () => {
                 false,
                 expectDoNothing,
                 true,
-                actualResult
+                actualResult,
+                ...expectedResults
             );
             expect(matchers.setValidatorResult).toHaveBeenCalledWith({
                 isSuccess: false,

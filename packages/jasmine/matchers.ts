@@ -14,10 +14,15 @@ import { GetActualResultWithSpy } from './models/utils.model';
 import { getActualResultWithSpy } from './utils';
 
 export enum MatchersTypes {
+    expectSpy = 'expectSpy',
     testTimeFrameDurationExeeded = 'testTimeFrameDurationExeeded',
     expectDoNothing = 'expectDoNothing',
     toBeFalsy = 'toBeFalsy',
     toBeTruthy = 'toBeTruthy',
+    toBe = 'toBe',
+    toEqual = 'toEqual',
+    toHaveBeenCalled = 'toHaveBeenCalled',
+    toHaveBeenCalledWith = 'toHaveBeenCalledWith',
 }
 
 export class Matchers implements MatchersCore {
@@ -48,7 +53,7 @@ export class Matchers implements MatchersCore {
 
     private getValidator(
         validatorMethod: ValidatorMethod,
-        errorMessageType: MatchersTypes
+        matcherType: MatchersTypes
     ): (expectedResults: Array<ExpectedResult>) => void {
         return (...expectedResults: Array<ExpectedResult>): void => {
             const actualResult = this.getActualResult();
@@ -64,9 +69,10 @@ export class Matchers implements MatchersCore {
                 isSuccess,
                 errorMessage: this.getErrorMessage(
                     isSuccess,
-                    errorMessages[errorMessageType],
+                    errorMessages[matcherType],
                     this.isNot,
-                    actualResult
+                    actualResult,
+                    ...expectedResults
                 ),
             });
         };
