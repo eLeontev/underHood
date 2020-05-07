@@ -3,8 +3,8 @@ import { MatchersTypes } from '../matchers';
 
 export type ErrorMessageCallback = (
     isNot: boolean,
-    expectedResult: ExpectedResult,
-    actualResult?: ActualResult
+    actualResult: ActualResult,
+    ...expectedResult: Array<ExpectedResult>
 ) => string;
 
 export type ErrorMessages = {
@@ -15,6 +15,6 @@ export type GetErrorMessage = (
     isSuccess: boolean,
     errorMessageCallback: ErrorMessageCallback,
     isNot: boolean,
-    expectedResult: ExpectedResult,
-    actualResult?: ActualResult
+    actualResult: ActualResult,
+    ...expectedResult: Array<ExpectedResult>
 ) => string;
