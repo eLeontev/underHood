@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { getActualResultWithSpy } from '../utils';
+import { isSpy, getActualResultWithSpy } from '../utils';
+
+describe('#isSpy', () => {
+    it('should return true if passed actual result is spy', () => {
+        expect(isSpy({ getSpyResult: true })).toBeTruthy();
+    });
+
+    it('should return false if passed actual result is spy', () => {
+        expect(isSpy(undefined)).toBeFalsy();
+    });
+});
 
 describe('#getActualResultWithSpy', () => {
     const actualResult = 'actualResult';
