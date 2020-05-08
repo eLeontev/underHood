@@ -1,3 +1,5 @@
+import { ErrorMessageCallback } from './error.messages.model';
+
 export interface ValidatorResult {
     isSuccess: boolean;
     errorMessage?: string;
@@ -19,4 +21,9 @@ export interface MatchersCore {
     not: MatchersCore;
     toBeTruthy: MatcherMethod;
     toBeFalsy: MatcherMethod;
+}
+
+export interface VaidatorResultWithErrorCallback {
+    isSuccess: boolean;
+    errorMessageCallback: ErrorMessageCallback;
 }

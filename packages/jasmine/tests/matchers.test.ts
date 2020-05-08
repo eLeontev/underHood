@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Matchers, MatchersTypes } from '../matchers';
-import { expectDoNothing, getErrorMessage } from '../error.messages';
+import { expectDoNothing, getErrorMessage, expectSpy } from '../error.messages';
 
 describe('Matchers', () => {
     let matchers: any;
@@ -51,26 +51,18 @@ describe('Matchers', () => {
         let validatorMethod: any;
         let expectedResults: any;
 
-        const errorMessage = 'errorMessage';
-        const isSuccess = 'isSuccess';
+        const validatorResult = 'validatorResult';
 
         beforeEach(() => {
             expectedResults = [1, 2, 3, 4];
-            validatorMethod = jest
+            matchers.getValidatorResult = jest
                 .fn()
-                .mockName('validatorMethod')
-                .mockReturnValue(isSuccess);
-            matchers.getActualResult = jest
-                .fn()
-                .mockName('getActualResult')
-                .mockReturnValue(actualResult);
+                .mockName('getValidatorResult')
+                .mockReturnValue(validatorResult);
             matchers.setValidatorResult = jest
                 .fn()
-                .mockName('setValidatorResult');
-            matchers.getErrorMessage = jest
-                .fn()
-                .mockName('getErrorMessage')
-                .mockReturnValue(errorMessage);
+                .mockName('setValidatorResult')
+                .mockReturnValue(validatorResult);
         });
 
         it('should return validator call of which should call orignial validator method', () => {
@@ -79,14 +71,14 @@ describe('Matchers', () => {
                 MatchersTypes.expectDoNothing
             );
 
-            expect(validatorMethod).not.toHaveBeenCalled();
+            expect(matchers.getValidatorResult).not.toHaveBeenCalled();
 
             matcher(...expectedResults);
 
-            expect(matchers.getActualResult).toHaveBeenCalled();
-            expect(validatorMethod).toHaveBeenCalledWith(
-                actualResult,
-                ...expectedResults
+            expect(matchers.getValidatorResult).toHaveBeenCalledWith(
+                validatorMethod,
+                MatchersTypes.expectDoNothing,
+                expectedResults
             );
         });
 
@@ -96,36 +88,223 @@ describe('Matchers', () => {
                 MatchersTypes.expectDoNothing
             )(...expectedResults);
 
-            expect(matchers.getErrorMessage).toHaveBeenCalledWith(
-                isSuccess,
-                expectDoNothing,
-                false,
-                actualResult,
-                ...expectedResults
+            expect(matchers.setValidatorResult).toHaveBeenCalledWith(
+                validatorResult
             );
-            expect(matchers.setValidatorResult).toHaveBeenCalledWith({
+        });
+    });
+
+    describe('#getValidatorResult', () => {
+        const errorMessageCallback = 'errorMessageCallback';
+        const isSuccess = 'isSuccess';
+        const errorMessage = 'errorMessage';
+        const validatorMethod = 'validatorMethod';
+        const matcherType = 'matcherType';
+        const isNot = 'isNot';
+
+        let resultWIthErrorCallback: any;
+        let expectedResults: any;
+
+        beforeEach(() => {
+            resultWIthErrorCallback = {
+                isSuccess,
+                errorMessageCallback,
+            };
+            expectedResults = [1, 2, 3, 4];
+
+            matchers.isNot = isNot;
+            matchers.getActualResult = jest
+                .fn()
+                .mockName('getActualResult')
+                .mockReturnValue(actualResult);
+            matchers.isExpectedSpyNotPassed = jest
+                .fn()
+                .mockName('isExpectedSpyNotPassed');
+            matchers.getExpectedSpyNotPassedValidatorResult = jest
+                .fn()
+                .mockName('getExpectedSpyNotPassedValidatorResult');
+            matchers.getValidatorResultWithErrorCallback = jest
+                .fn()
+                .mockName('getValidatorResultWithErrorCallback');
+            matchers.getErrorMessage = jest
+                .fn()
+                .mockName('getErrorMessage')
+                .mockReturnValue(errorMessage);
+        });
+
+        it('should return default failed result if spy validator received not the spy', () => {
+            matchers.isExpectedSpyNotPassed.mockReturnValue(true);
+            matchers.getExpectedSpyNotPassedValidatorResult.mockReturnValue(
+                resultWIthErrorCallback
+            );
+
+            expect(
+                matchers.getValidatorResult(
+                    validatorMethod,
+                    matcherType,
+                    expectedResults
+                )
+            ).toEqual({
                 isSuccess,
                 errorMessage,
             });
-        });
-
-        it('should set validator result with negative results if valdiator called from "NOT"', () => {
-            matchers.isNot = true;
-            matchers.getValidator(
-                validatorMethod,
-                MatchersTypes.expectDoNothing
-            )(...expectedResults);
-
+            expect(matchers.getActualResult).toHaveBeenCalled();
+            expect(matchers.isExpectedSpyNotPassed).toHaveBeenCalledWith(
+                actualResult,
+                matcherType
+            );
+            expect(
+                matchers.getExpectedSpyNotPassedValidatorResult
+            ).toHaveBeenCalled();
+            expect(
+                matchers.getValidatorResultWithErrorCallback
+            ).not.toHaveBeenCalled();
             expect(matchers.getErrorMessage).toHaveBeenCalledWith(
-                false,
-                expectDoNothing,
-                true,
+                isSuccess,
+                errorMessageCallback,
+                isNot,
                 actualResult,
                 ...expectedResults
             );
-            expect(matchers.setValidatorResult).toHaveBeenCalledWith({
-                isSuccess: false,
+        });
+
+        it('should return  actual validator result in other cases', () => {
+            matchers.isExpectedSpyNotPassed.mockReturnValue(false);
+            matchers.getValidatorResultWithErrorCallback.mockReturnValue(
+                resultWIthErrorCallback
+            );
+
+            expect(
+                matchers.getValidatorResult(
+                    validatorMethod,
+                    matcherType,
+                    expectedResults
+                )
+            ).toEqual({
+                isSuccess,
                 errorMessage,
+            });
+            expect(matchers.getActualResult).toHaveBeenCalled();
+            expect(matchers.isExpectedSpyNotPassed).toHaveBeenCalledWith(
+                actualResult,
+                matcherType
+            );
+            expect(
+                matchers.getExpectedSpyNotPassedValidatorResult
+            ).not.toHaveBeenCalled();
+            expect(
+                matchers.getValidatorResultWithErrorCallback
+            ).toHaveBeenCalledWith(
+                validatorMethod,
+                actualResult,
+                matcherType,
+                expectedResults
+            );
+            expect(matchers.getErrorMessage).toHaveBeenCalledWith(
+                isSuccess,
+                errorMessageCallback,
+                isNot,
+                actualResult,
+                ...expectedResults
+            );
+        });
+    });
+
+    describe('#getValidatorResultWithErrorCallback', () => {
+        const validatorMethodResult = 'validatorMethodResult';
+        let validatorMethod: any;
+        let expectedResults: any;
+
+        beforeEach(() => {
+            expectedResults = [1, 2, 3, 4];
+            validatorMethod = jest
+                .fn()
+                .mockName('validatorMethod')
+                .mockReturnValue(validatorMethodResult);
+        });
+
+        it('should return result of validator with errorCallback if inversion is not active', () => {
+            expect(
+                matchers.getValidatorResultWithErrorCallback(
+                    validatorMethod,
+                    actualResult,
+                    MatchersTypes.expectDoNothing,
+                    expectedResults
+                )
+            ).toEqual({
+                isSuccess: validatorMethodResult,
+                errorMessageCallback: expectDoNothing,
+            });
+            expect(validatorMethod).toHaveBeenCalledWith(
+                actualResult,
+                ...expectedResults
+            );
+        });
+
+        it('should return opposit result of validator with errorCallback if inversion is active', () => {
+            matchers.isNot = true;
+            expect(
+                matchers.getValidatorResultWithErrorCallback(
+                    validatorMethod,
+                    actualResult,
+                    MatchersTypes.expectDoNothing,
+                    expectedResults
+                )
+            ).toEqual({
+                isSuccess: false,
+                errorMessageCallback: expectDoNothing,
+            });
+            expect(validatorMethod).toHaveBeenCalledWith(
+                actualResult,
+                ...expectedResults
+            );
+        });
+    });
+
+    describe('#isExpectedSpyNotPassed', () => {
+        beforeEach(() => {
+            matchers.isSpy = jest.fn().mockName('isSpy');
+        });
+
+        it('should return true if spy is not passed to spy validator', () => {
+            matchers.isSpy.mockReturnValue(false);
+            expect(
+                matchers.isExpectedSpyNotPassed(
+                    actualResult,
+                    MatchersTypes.toHaveBeenCalled
+                )
+            ).toBeTruthy();
+            expect(
+                matchers.isExpectedSpyNotPassed(
+                    actualResult,
+                    MatchersTypes.toHaveBeenCalledWith
+                )
+            ).toBeTruthy();
+        });
+
+        it('should return false in other cases', () => {
+            matchers.isSpy.mockReturnValue(false);
+            expect(
+                matchers.isExpectedSpyNotPassed(
+                    actualResult,
+                    MatchersTypes.expectDoNothing
+                )
+            ).toBeFalsy();
+            matchers.isSpy.mockReturnValue(true);
+            expect(
+                matchers.isExpectedSpyNotPassed(
+                    actualResult,
+                    MatchersTypes.toHaveBeenCalledWith
+                )
+            ).toBeFalsy();
+        });
+    });
+
+    describe('#getExpectedSpyNotPassedValidatorResult', () => {
+        it('should return default result for spy validator if spy is not passed', () => {
+            expect(matchers.getExpectedSpyNotPassedValidatorResult()).toEqual({
+                isSuccess: false,
+                errorMessageCallback: expectSpy,
             });
         });
     });
