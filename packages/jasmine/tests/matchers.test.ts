@@ -32,6 +32,10 @@ describe('Matchers', () => {
     it('should define matchers on init', () => {
         expect(matchers.toBeFalsy).toBeDefined();
         expect(matchers.toBeTruthy).toBeDefined();
+        expect(matchers.toBe).toBeDefined();
+        expect(matchers.toEqual).toBeDefined();
+        expect(matchers.toHaveBeenCalled).toBeDefined();
+        expect(matchers.toHaveBeenCalledWith).toBeDefined();
     });
 
     it('should define validator on init', () => {
@@ -45,6 +49,10 @@ describe('Matchers', () => {
         expect(matchers.not.toBeFalsy).toBeDefined();
         expect(matchers.not.toBeTruthy).toBeDefined();
         expect(matchers.not.getErrorMessage).toBe(getErrorMessage);
+        expect(matchers.not.toBe).toBeDefined();
+        expect(matchers.not.toEqual).toBeDefined();
+        expect(matchers.not.toHaveBeenCalled).toBeDefined();
+        expect(matchers.not.toHaveBeenCalledWith).toBeDefined();
     });
 
     describe('#getValidator', () => {
@@ -315,19 +323,8 @@ describe('Matchers', () => {
         });
 
         it('should return actual result with possiblitiy to return result of spy', () => {
-            const actualResultWithSpyValidation =
-                'actualResultWithSpyValidation';
-            matchers.getActualResultWithSpy = jest
-                .fn()
-                .mockName('getActualResultWithSpy')
-                .mockReturnValue(actualResultWithSpyValidation);
-
-            expect(matchers.getActualResult()).toBe(
-                actualResultWithSpyValidation
-            );
-            expect(matchers.getActualResultWithSpy).toHaveBeenCalledWith(
-                actualResult
-            );
+            matchers.validator.actualResult = actualResult;
+            expect(matchers.getActualResult()).toBe(actualResult);
         });
     });
 

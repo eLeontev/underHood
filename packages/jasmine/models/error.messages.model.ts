@@ -4,7 +4,7 @@ import { MatchersTypes } from '../matchers';
 export type ErrorMessageCallback = (
     isNot: boolean,
     actualResult: ActualResult,
-    ...expectedResult: Array<ExpectedResult>
+    expectedResults: Array<ExpectedResult>
 ) => string;
 
 export type ErrorMessages = {

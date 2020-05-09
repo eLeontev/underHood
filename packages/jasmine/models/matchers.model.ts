@@ -21,6 +21,10 @@ export interface MatchersCore {
     not: MatchersCore;
     toBeTruthy: MatcherMethod;
     toBeFalsy: MatcherMethod;
+    toBe: MatcherMethod;
+    toEqual: MatcherMethod;
+    toHaveBeenCalled: MatcherMethod;
+    toHaveBeenCalledWith: MatcherMethod;
 }
 
 export interface VaidatorResultWithErrorCallback {

@@ -3,6 +3,7 @@
 import { Expect } from '../expect';
 import { store } from '../store';
 import { Matchers } from '../matchers';
+import { stringifyPassedValue } from '../utils';
 
 describe('Expect', () => {
     let instance: any;
@@ -91,7 +92,7 @@ describe('Expect', () => {
                 actualResult,
                 validatorResult: {
                     isSuccess: false,
-                    errorMessage: `looks like this expect does nothing with: ${JSON.stringify(
+                    errorMessage: `looks like this expect does nothing with: ${stringifyPassedValue(
                         actualResult
                     )}`,
                 },

@@ -270,7 +270,12 @@ describe('results validation', () => {
                             errorMessage: '',
                         },
                         {
-                            errorMessage: 'expected "valid" not to be truthy',
+                            errorMessage:
+                                'expected "invalid" not to be "invalid"',
+                            isSuccess: false,
+                        },
+                        {
+                            errorMessage: 'expected "valid" to be "invalid"',
                             isSuccess: false,
                         },
                     ],
@@ -289,8 +294,14 @@ describe('results validation', () => {
                             errorMessage: '',
                         },
                         {
-                            isSuccess: true,
-                            errorMessage: '',
+                            errorMessage:
+                                'expected {"a":[123]} not to equal {"a":[123]}',
+                            isSuccess: false,
+                        },
+                        {
+                            errorMessage:
+                                'expected function with name: fn1 to equal function with name: fn2',
+                            isSuccess: false,
                         },
                     ],
                 },

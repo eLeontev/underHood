@@ -81,7 +81,7 @@ describe('Spy', () => {
             expect(spyMethod(...args)).toBe(spyResult);
             expect(instance.perfromSpyCall).toHaveBeenCalledWith(
                 spyMethod,
-                ...args
+                args
             );
         });
 
@@ -134,10 +134,11 @@ describe('Spy', () => {
 
                 spyProperties.handler = handler;
                 spyProperties.countOfCalls = 0;
+                spyProperties.args = [args];
             });
 
             it('should increment count of spy calls and set its called status to true', () => {
-                instance.perfromSpyCall(spyMethod, ...args);
+                instance.perfromSpyCall(spyMethod, args);
 
                 expect(instance.getSpyProperties).toHaveBeenCalledWith(
                     spyMethod
@@ -147,10 +148,17 @@ describe('Spy', () => {
                 expect(handler).toHaveBeenCalledWith(...args);
             });
 
-            it('should  return spy API with result of spy handler', () => {
-                expect(
-                    instance.perfromSpyCall(spyMethod, ...args).getSpyResult()
-                ).toBe(spyResult);
+            it('should store arguments with which spy was called', () => {
+                instance.perfromSpyCall(spyMethod, args);
+                expect(spyProperties.args).toEqual([args, args]);
+            });
+
+            it('should  return result of spy handler function', () => {
+                const handlerResult = 'handlerResult';
+                handler.mockReturnValue(handlerResult);
+                expect(instance.perfromSpyCall(spyMethod, ...args)).toBe(
+                    handlerResult
+                );
             });
         });
 

@@ -68,13 +68,17 @@ export const getTestInstanceWithMockData = () => {
         instance.expect(null).toBeFalsy();
     };
     const itCallbackFifth = () => {
-        instance.expect('invalid').not.toBeFalsy();
-        instance.expect('valid').not.toBeTruthy();
+        instance.expect('invalid').toBe('invalid');
+        instance.expect('invalid').not.toBe('invalid');
+        instance.expect('valid').toBe('invalid');
     };
     const itCallbackSixth = async () => {
-        instance.expect(0).toBeFalsy();
+        instance.expect({ a: [123] }).toEqual({ a: [123] });
+        instance.expect({ a: [123] }).not.toEqual({ a: [123] });
         await asyncMethod(1);
-        instance.expect('').toBeFalsy();
+        const fn1 = () => ({});
+        const fn2 = () => ({});
+        instance.expect(fn1).toEqual(fn2);
     };
 
     instance.describe('root-1', () => {

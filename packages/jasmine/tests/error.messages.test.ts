@@ -14,6 +14,7 @@ import {
     toHaveBeenCalledWith,
     expectSpy,
 } from '../error.messages';
+import { stringifyPassedValue } from '../utils';
 
 describe('#getNotMessage', () => {
     it('should return string with space if isNot is not set', () => {
@@ -46,8 +47,8 @@ const expectedResult = 'expectedResult';
 
 describe('#testTimeFrameDurationExeeded', () => {
     it('should return valid message based on passed value', () => {
-        expect(testTimeFrameDurationExeeded(false, actualResult)).toBe(
-            `async test takes more than available ${JSON.stringify(
+        expect(testTimeFrameDurationExeeded(false, actualResult, [])).toBe(
+            `async test takes more than available ${stringifyPassedValue(
                 actualResult
             )}ms`
         );
@@ -56,8 +57,8 @@ describe('#testTimeFrameDurationExeeded', () => {
 
 describe('#expectDoNothing', () => {
     it('should return valid message based on passed value', () => {
-        expect(expectDoNothing(false, actualResult)).toBe(
-            `looks like this expect does nothing with: ${JSON.stringify(
+        expect(expectDoNothing(false, actualResult, [])).toBe(
+            `looks like this expect does nothing with: ${stringifyPassedValue(
                 actualResult
             )}`
         );
@@ -66,23 +67,23 @@ describe('#expectDoNothing', () => {
 
 describe('#toBeFalsy', () => {
     it('should return valid message based on passed value', () => {
-        expect(toBeFalsy(false, actualResult)).toBe(
-            `expected ${JSON.stringify(actualResult)} to be falsy`
+        expect(toBeFalsy(false, actualResult, [])).toBe(
+            `expected ${stringifyPassedValue(actualResult)} to be falsy`
         );
 
-        expect(toBeFalsy(true, actualResult)).toBe(
-            `expected ${JSON.stringify(actualResult)} not to be falsy`
+        expect(toBeFalsy(true, actualResult, [])).toBe(
+            `expected ${stringifyPassedValue(actualResult)} not to be falsy`
         );
     });
 });
 
 describe('#toBeTruthy', () => {
     it('should return valid message based on passed value', () => {
-        expect(toBeTruthy(false, actualResult)).toBe(
-            `expected ${JSON.stringify(actualResult)} to be truthy`
+        expect(toBeTruthy(false, actualResult, [])).toBe(
+            `expected ${stringifyPassedValue(actualResult)} to be truthy`
         );
-        expect(toBeTruthy(true, actualResult)).toBe(
-            `expected ${JSON.stringify(actualResult)} not to be truthy`
+        expect(toBeTruthy(true, actualResult, [])).toBe(
+            `expected ${stringifyPassedValue(actualResult)} not to be truthy`
         );
     });
 });
@@ -90,14 +91,14 @@ describe('#toBeTruthy', () => {
 describe('#toBe', () => {
     it('should return valid message based on passed value', () => {
         expect(toBe(false, actualResult, [expectedResult])).toBe(
-            `expected ${JSON.stringify(actualResult)} to be ${JSON.stringify(
-                expectedResult
-            )}`
+            `expected ${stringifyPassedValue(
+                actualResult
+            )} to be ${stringifyPassedValue(expectedResult)}`
         );
         expect(toBe(true, actualResult, [expectedResult])).toBe(
-            `expected ${JSON.stringify(
+            `expected ${stringifyPassedValue(
                 actualResult
-            )} not to be ${JSON.stringify(expectedResult)}`
+            )} not to be ${stringifyPassedValue(expectedResult)}`
         );
     });
 });
@@ -105,51 +106,58 @@ describe('#toBe', () => {
 describe('#toEqual', () => {
     it('should return valid message based on passed value', () => {
         expect(toEqual(false, actualResult, [expectedResult])).toBe(
-            `expected ${JSON.stringify(actualResult)} to equal ${JSON.stringify(
-                expectedResult
-            )}`
+            `expected ${stringifyPassedValue(
+                actualResult
+            )} to equal ${stringifyPassedValue(expectedResult)}`
         );
         expect(toEqual(true, actualResult, [expectedResult])).toBe(
-            `expected ${JSON.stringify(
+            `expected ${stringifyPassedValue(
                 actualResult
-            )} not to equal ${JSON.stringify(expectedResult)}`
+            )} not to equal ${stringifyPassedValue(expectedResult)}`
         );
     });
 });
 
+const spyName = 'spyName';
+const getSpyProperties = (): any => ({ spyName });
+
 describe('#toHaveBeenCalled', () => {
     it('should return valid message based on passed value', () => {
-        expect(toHaveBeenCalled(false, actualResult)).toBe(
-            `expected ${JSON.stringify(actualResult)} to have been called`
+        expect(toHaveBeenCalled(false, { getSpyProperties }, [])).toBe(
+            `expected spy ${spyName} to have been called`
         );
-        expect(toHaveBeenCalled(true, actualResult)).toBe(
-            `expected ${JSON.stringify(actualResult)} not to have been called`
+        expect(toHaveBeenCalled(true, { getSpyProperties }, [])).toBe(
+            `expected spy ${spyName} not to have been called`
         );
     });
 });
 
 describe('#toHaveBeenCalledWith', () => {
     it('should return valid message based on passed value', () => {
-        expect(toHaveBeenCalledWith(false, actualResult, expectedResult)).toBe(
-            `expected ${JSON.stringify(
-                actualResult
-            )} to have been called with ${JSON.stringify([expectedResult])}`
+        expect(
+            toHaveBeenCalledWith(false, { getSpyProperties }, [expectedResult])
+        ).toBe(
+            `expected spy ${spyName} to have been called with ${stringifyPassedValue(
+                [expectedResult]
+            )}`
         );
-        expect(toHaveBeenCalledWith(true, actualResult, expectedResult)).toBe(
-            `expected ${JSON.stringify(
-                actualResult
-            )} not to have been called with ${JSON.stringify([expectedResult])}`
+        expect(
+            toHaveBeenCalledWith(true, { getSpyProperties }, [expectedResult])
+        ).toBe(
+            `expected spy ${spyName} not to have been called with ${stringifyPassedValue(
+                [expectedResult]
+            )}`
         );
     });
 });
 
 describe('#expectSpy', () => {
     it('should return valid message based on passed value', () => {
-        expect(expectSpy(false, actualResult)).toBe(
-            `expected spy but got ${JSON.stringify(actualResult)}`
+        expect(expectSpy(false, actualResult, [])).toBe(
+            `expected spy but got ${stringifyPassedValue(actualResult)}`
         );
-        expect(expectSpy(true, actualResult)).toBe(
-            `expected spy but got ${JSON.stringify(actualResult)}`
+        expect(expectSpy(true, actualResult, [])).toBe(
+            `expected spy but got ${stringifyPassedValue(actualResult)}`
         );
     });
 });

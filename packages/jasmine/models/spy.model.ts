@@ -1,10 +1,13 @@
 export type ReturnValue = <V>(value: V) => SpyMethod;
 export type CallFake = (cb: Function) => SpyMethod;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SpyArguments = Array<any>;
 export interface SpyMethod {
-    (): void;
+    (...args: SpyArguments): void;
     returnValue: ReturnValue;
     callFake: CallFake;
+    getSpyProperties(): SpyProperties;
 }
 
 export interface SpyCore {
@@ -16,4 +19,5 @@ export interface SpyProperties {
     spyName: string;
     isCalled: boolean;
     countOfCalls: number;
+    args: Array<SpyArguments>;
 }
