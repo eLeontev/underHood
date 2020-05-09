@@ -11,8 +11,7 @@ import { Validators } from './validators';
 import { ValidatorMethod } from './models/validators.model';
 import { errorMessages, getErrorMessage } from './error.messages';
 import { GetErrorMessage } from './models/error.messages.model';
-import { GetActualResultWithSpy, IsSpy } from './models/utils.model';
-import { getActualResultWithSpy, isSpy } from './utils';
+import { isSpy, IsSpy } from './utils';
 
 export enum MatchersTypes {
     expectSpy = 'expectSpy',
@@ -36,10 +35,13 @@ export class Matchers implements MatchersCore {
 
     private isSpy: IsSpy = isSpy;
     private getErrorMessage: GetErrorMessage = getErrorMessage;
-    private getActualResultWithSpy: GetActualResultWithSpy = getActualResultWithSpy;
 
     public toBeFalsy: MatcherMethod;
     public toBeTruthy: MatcherMethod;
+    public toBe: MatcherMethod;
+    public toEqual: MatcherMethod;
+    public toHaveBeenCalled: MatcherMethod;
+    public toHaveBeenCalledWith: MatcherMethod;
 
     constructor(
         private validator: Validator,
@@ -53,6 +55,19 @@ export class Matchers implements MatchersCore {
         this.toBeTruthy = this.getValidator(
             validators.toBeTruthy,
             MatchersTypes.toBeTruthy
+        );
+        this.toBe = this.getValidator(validators.toBe, MatchersTypes.toBe);
+        this.toEqual = this.getValidator(
+            validators.toEqual,
+            MatchersTypes.toEqual
+        );
+        this.toHaveBeenCalled = this.getValidator(
+            validators.toHaveBeenCalled,
+            MatchersTypes.toHaveBeenCalled
+        );
+        this.toHaveBeenCalledWith = this.getValidator(
+            validators.toHaveBeenCalledWith,
+            MatchersTypes.toHaveBeenCalledWith
         );
 
         this.setNotField(validator, validators, isNot);
@@ -139,7 +154,7 @@ export class Matchers implements MatchersCore {
     }
 
     private getActualResult(): ActualResult {
-        return this.getActualResultWithSpy(this.validator.actualResult);
+        return this.validator.actualResult;
     }
 
     private setValidatorResult(validatorResult: ValidatorResult): void {
