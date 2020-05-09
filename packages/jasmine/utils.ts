@@ -1,18 +1,16 @@
+import isFunction from 'lodash.isfunction';
+
 import { ActualResult } from './models/matchers.model';
-import { SpyAPICore } from './models/spy-api.model';
-import { GetActualResultWithSpy, IsSpy } from './models/utils.model';
+import { SpyMethod } from './models/spy.model';
 
+export type IsSpy = (actualResult: ActualResult) => boolean;
 export const isSpy: IsSpy = (actualResult: ActualResult): boolean =>
-    actualResult && Boolean(actualResult.getSpyResult);
+    actualResult &&
+    isFunction(actualResult) &&
+    Boolean((actualResult as SpyMethod).getSpyProperties);
 
-export const getActualResultWithSpy: GetActualResultWithSpy = (
-    actualResult: ActualResult
-): ActualResult => {
-    let result = actualResult;
-
-    if (isSpy(actualResult)) {
-        result = (actualResult as SpyAPICore).getSpyResult();
-    }
-
-    return result;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const stringifyPassedValue = (passedValue: any): string =>
+    isFunction(passedValue)
+        ? `function with name: ${passedValue.name}`
+        : JSON.stringify(passedValue);
