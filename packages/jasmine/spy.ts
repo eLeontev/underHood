@@ -5,10 +5,26 @@ import {
     CallFake,
     ReturnValue,
     SpyArguments,
+    CallOrigin,
 } from './models/spy.model';
 
 export class Spy implements SpyCore {
     private spyPropertiesMap: Map<SpyMethod, SpyProperties> = new Map();
+
+    public spyMethod = <
+        Fn extends Function,
+        Context extends { [method: string]: Fn },
+        MethodName extends keyof Context
+    >(
+        context: Context,
+        methodName: MethodName
+    ): SpyMethod => {
+        const spyMethod = this.getNewRegisterSpy(methodName as string);
+        this.setOrigin<Fn, Context, MethodName>(spyMethod, context, methodName);
+        spyMethod.callOrigin = this.getCallOrigin(spyMethod);
+
+        return spyMethod;
+    };
 
     public createSpy = (spyName: string): SpyMethod => {
         return this.getNewRegisterSpy(spyName);
@@ -87,6 +103,25 @@ export class Spy implements SpyCore {
 
             return spyMethod;
         };
+    }
+
+    private getCallOrigin(spyMethod: SpyMethod): CallOrigin {
+        return (): SpyMethod => {
+            const spyProperties = this.getSpyProperties(spyMethod);
+
+            spyProperties.handler = spyProperties.origin;
+
+            return spyMethod;
+        };
+    }
+
+    private setOrigin<
+        Fn extends Function,
+        Context extends { [method: string]: Fn },
+        MethodName extends keyof Context
+    >(spyMethod: SpyMethod, context: Context, methodName: MethodName): void {
+        const spyProperties = this.getSpyProperties(spyMethod);
+        spyProperties.origin = context[methodName];
     }
 
     private getSpyProperties(spyMethod: SpyMethod): SpyProperties {
