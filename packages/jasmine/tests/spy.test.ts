@@ -26,6 +26,45 @@ describe('Spy', () => {
         expect(instance.spyPropertiesMap.size).toBe(0);
     });
 
+    describe('#spyMethod', () => {
+        let spy: any;
+        const callOrigin: any = 'callOrigin';
+        const context: any = 'context';
+        const merthodName: any = 'merthodName';
+
+        beforeEach(() => {
+            spy = {};
+            instance.getNewRegisterSpy = jest
+                .fn()
+                .mockName('getNewRegisterSpy')
+                .mockReturnValue(spy);
+            instance.setOrigin = jest.fn().mockName('setOrigin');
+            instance.getCallOrigin = jest
+                .fn()
+                .mockName('getCallOrigin')
+                .mockReturnValue(callOrigin);
+        });
+
+        it('should return spy', () => {
+            expect(instance.spyMethod(context, merthodName)).toBe(spy);
+        });
+
+        it('should register new stected spy, set its origin implimentation and set callOrigin methods', () => {
+            instance.spyMethod(context, merthodName);
+
+            expect(instance.getNewRegisterSpy).toHaveBeenCalledWith(
+                merthodName
+            );
+            expect(instance.setOrigin).toHaveBeenCalledWith(
+                spy,
+                context,
+                merthodName
+            );
+            expect(instance.getCallOrigin).toHaveBeenCalledWith(spy);
+            expect(spy.callOrigin).toBe(callOrigin);
+        });
+    });
+
     describe('#createSpy', () => {
         const spy: any = 'spy';
         beforeEach(() => {
@@ -176,6 +215,19 @@ describe('Spy', () => {
             });
         });
 
+        describe('#getCallOrigin', () => {
+            const origin = 'origin';
+
+            it('should set origin to handler method and return spy method', () => {
+                spyProperties.origin = origin;
+                expect(instance.getCallOrigin(spyMethod)()).toBe(spyMethod);
+                expect(spyProperties.handler).toBe(origin);
+                expect(instance.getSpyProperties).toHaveBeenCalledWith(
+                    spyMethod
+                );
+            });
+        });
+
         describe('#getReturnValue', () => {
             const returnValue = 'returnValue';
 
@@ -188,6 +240,29 @@ describe('Spy', () => {
                     spyMethod
                 );
             });
+        });
+    });
+
+    describe('#setOrigin', () => {
+        let spyProperties: any;
+        let context: any;
+
+        const methodName = 'methodName';
+        const origin = (): any => ({});
+
+        beforeEach(() => {
+            context = { [methodName]: origin };
+            spyProperties = {};
+            instance.getSpyProperties = jest
+                .fn()
+                .mockName('getSpyProperties')
+                .mockReturnValue(spyProperties);
+        });
+
+        it('should set origin method to origin spy porperties', () => {
+            instance.setOrigin(spyMethod, context, methodName);
+            expect(instance.getSpyProperties).toHaveBeenCalledWith(spyMethod);
+            expect(spyProperties.origin).toBe(origin);
         });
     });
 
