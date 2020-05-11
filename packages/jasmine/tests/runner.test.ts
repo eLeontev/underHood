@@ -20,6 +20,7 @@ describe('Runner', () => {
 
     describe('#run', () => {
         const rootDescribersId = 'rootDescribersId';
+        const fDescribersId = 'fDescribersId';
         const performDescribersResult = 'performDescribersResult';
         const disabledDescriber = 'disabledDescriber';
         const disabledTestCase = 'disabledTestCase';
@@ -41,6 +42,17 @@ describe('Runner', () => {
             expect(testsResults).toBe(performDescribersResult);
             expect(instance.performDecribers).toHaveBeenCalledWith(
                 rootDescribersId,
+                []
+            );
+        });
+
+        it('should async return list of results only for chosen tests if they exist', async () => {
+            instance.store.fDescribersId = fDescribersId;
+            const { testsResults } = await instance.run();
+
+            expect(testsResults).toBe(performDescribersResult);
+            expect(instance.performDecribers).toHaveBeenCalledWith(
+                fDescribersId,
                 []
             );
         });
