@@ -5,6 +5,7 @@ export const store: Store = {
     isDescriberFormingInProgress: false,
     describers: {},
     rootDescribersId: [],
+    fDescribersId: [],
     activeTestCaseIndex: null,
     nextDescriberArguments: [],
     inactiveDescribers: [],
