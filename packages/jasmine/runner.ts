@@ -21,16 +21,25 @@ export class Runner {
     constructor(private store: Store) {}
 
     public run = async (): Promise<TestResultsWithDisabledMethods> => {
-        const testsResults = await this.performDecribers(
-            this.store.rootDescribersId,
-            []
-        );
+        const { store } = this;
+        const {
+            rootDescribersId,
+            fDescribersId,
+            inactiveDescribers,
+            inactiveTestCases,
+        } = store;
+
+        const describersId = fDescribersId.length
+            ? fDescribersId
+            : rootDescribersId;
+
+        const testsResults = await this.performDecribers(describersId, []);
 
         return {
             testsResults,
             disabledMethods: {
-                describers: [...this.store.inactiveDescribers],
-                testCases: [...this.store.inactiveTestCases],
+                describers: [...inactiveDescribers],
+                testCases: [...inactiveTestCases],
             },
         };
     };
@@ -87,6 +96,7 @@ export class Runner {
         const { it } = testCase;
         this.setActiveTestCaseIndex(index);
 
+        this.initValidators(testCase);
         const errorValidatorResult = await this.asyncCallbackHanlder(
             it.callback,
             context
@@ -119,6 +129,10 @@ export class Runner {
         );
 
         return Promise.race([callbackPromise, errorTestPerofomrancePromise]);
+    }
+
+    private initValidators(testCase: TestCase): void {
+        testCase.validators = [];
     }
 
     private setActiveDescriberId(describerId: string): void {

@@ -10,11 +10,18 @@ describe('Jasmine', () => {
     });
 
     it('should define test API', () => {
-        expect(instance.expect).toBeDefined();
-        expect(instance.it).toBeDefined();
+        expect(instance.describe).toBeDefined();
+        expect(instance.xdescribe).toBeDefined();
+
         expect(instance.beforeEach).toBeDefined();
         expect(instance.afterEach).toBeDefined();
-        expect(instance.describe).toBeDefined();
+
+        expect(instance.it).toBeDefined();
+        expect(instance.xit).toBeDefined();
+        expect(instance.fit).toBeDefined();
+
+        expect(instance.expect).toBeDefined();
+
         expect(instance.run).toBeDefined();
     });
 });

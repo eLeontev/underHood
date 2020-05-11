@@ -5,6 +5,7 @@ export interface Store {
     isDescriberFormingInProgress: boolean;
     describers: Describers;
     rootDescribersId: Array<string>;
+    fDescribersId: Array<string>;
     activeTestCaseIndex: number;
     nextDescriberArguments: Array<DescriberArguments>;
     inactiveDescribers: Array<string>;

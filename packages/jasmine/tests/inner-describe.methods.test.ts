@@ -27,6 +27,37 @@ describe('InnerDescribeMethods', () => {
         };
     });
 
+    describe('#fit', () => {
+        const fDescriber = 'fDescriber';
+
+        beforeEach(() => {
+            instance.getActiveDescriber = jest
+                .fn()
+                .mockName('getActiveDescriber')
+                .mockReturnValue(describer);
+            instance.getFDescriber = jest
+                .fn()
+                .mockName('getFDescriber')
+                .mockReturnValue(fDescriber);
+            instance.registerFDescriber = jest
+                .fn()
+                .mockName('registerFDescriber');
+        });
+
+        it('should form fDescriber from active describer and register it in the collection of describers', () => {
+            instance.fit(description, callback);
+
+            expect(instance.getActiveDescriber).toHaveBeenCalled();
+            expect(instance.getFDescriber).toHaveBeenCalledWith(describer, {
+                description,
+                callback,
+            });
+            expect(instance.registerFDescriber).toHaveBeenCalledWith(
+                fDescriber
+            );
+        });
+    });
+
     describe('#xit', () => {
         it('should store disabled test case description in state', () => {
             const disabledTestCaseDescription = 'disabledTestCaseDescription';
@@ -103,6 +134,46 @@ describe('InnerDescribeMethods', () => {
 
         it('should return active describer', () => {
             expect(instance.getActiveDescriber()).toBe(describer);
+        });
+    });
+
+    describe('#getFDescriber', () => {
+        it('should return fDescriber contains bfe/afe lists of passed describers', () => {
+            const it: any = 'it';
+
+            expect(instance.getFDescriber(describer, it)).toEqual({
+                beforeEachList: [existedBeforeEachCallback],
+                afterEachList: [existedAfterEachCallback],
+                childrenDescribersId: [],
+                context: {},
+                testCases: [
+                    {
+                        it,
+                        validators: [],
+                    },
+                ],
+            });
+        });
+    });
+
+    describe('#registerFDescriber', () => {
+        const existedFDescriberId: any = 'existedFDescriberId';
+
+        beforeEach(() => {
+            instance.store.describers = { existedDescribers: true };
+            instance.store.fDescribersId = [existedFDescriberId];
+        });
+
+        it('should set passed fDescriber to existed describers and set its Id in the fDescriberId list', () => {
+            instance.registerFDescriber(describer);
+            expect(instance.store.describers).toEqual({
+                existedDescribers: true,
+                'fdescr-1': describer,
+            });
+            expect(instance.store.fDescribersId).toEqual([
+                existedFDescriberId,
+                'fdescr-1',
+            ]);
         });
     });
 });

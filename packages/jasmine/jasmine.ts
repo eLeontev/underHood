@@ -32,6 +32,7 @@ export class Jasmine implements JasmineCore {
 
     public it: ItModel;
     public xit: ItModel;
+    public fit: ItModel;
 
     public expect: ExpectModel;
 
@@ -50,6 +51,7 @@ export class Jasmine implements JasmineCore {
 
         this.it = innerDescribeMethodsInstance.it;
         this.xit = innerDescribeMethodsInstance.xit;
+        this.fit = innerDescribeMethodsInstance.fit;
 
         const expectInstance = new Expect(this.store);
         this.expect = expectInstance.expect;
