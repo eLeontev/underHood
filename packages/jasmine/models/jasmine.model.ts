@@ -17,6 +17,7 @@ export interface InnerDescribeMethodsCore {
     afterEach: BeforeAfterEachModel;
     it: ItModel;
     xit: ItModel;
+    fit: ItModel;
 }
 
 export type ExpectModel = (actualResult: ActualResult) => MatchersCore;
