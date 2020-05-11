@@ -219,6 +219,7 @@ describe('Runner', () => {
             instance.setActiveTestCaseIndex = jest
                 .fn()
                 .mockName('setActiveTestCaseIndex');
+            instance.initValidators = jest.fn().mockName('initValidators');
             instance.asyncCallbackHanlder = jest
                 .fn()
                 .mockName('asyncCallbackHanlder');
@@ -275,6 +276,20 @@ describe('Runner', () => {
                 validatorResults: [errorValidatorResult],
             });
         });
+
+        it('should init validators of test case ibefore its call to avoid their duplication in the next calls', async () => {
+            instance.initValidators.mockImplementation((): any =>
+                expect(instance.asyncCallbackHanlder).not.toHaveBeenCalled()
+            );
+
+            await instance.performTestAndReturnItsResult(
+                context,
+                testCase,
+                index
+            );
+
+            expect(instance.initValidators).toHaveBeenCalledWith(testCase);
+        });
     });
 
     describe('#asyncCallbackHanlder', () => {
@@ -320,6 +335,14 @@ describe('Runner', () => {
                 errorMessage: 'async test takes more than available 100ms',
             });
             expect(callback).toHaveBeenCalled();
+        });
+    });
+
+    describe('#initValidators', () => {
+        it('should set empty arary to validator of passed test case to avoi dduplications after each call', () => {
+            const testCase: any = { validators: [1, 2, 3] };
+            instance.initValidators(testCase);
+            expect(testCase.validators).toEqual([]);
         });
     });
 
