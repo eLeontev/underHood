@@ -12,6 +12,7 @@ describe('Describe', () => {
     const describerId = 'describerId';
     const activeDescriberId = 'activeDescriberId';
     const parentMethods = 'parentMethods';
+    const isFDescribe = 'isFDescribe';
 
     beforeEach(() => {
         instance = new Describe({ ...store });
@@ -20,6 +21,27 @@ describe('Describe', () => {
     beforeEach(() => {
         callback = jest.fn();
         describer = 'describer';
+    });
+
+    describe('#fdescribe', () => {
+        beforeEach(() => {
+            instance.describeHandler = jest.fn().mockName('describeHandler');
+            instance.getEmptyParentMethods = jest
+                .fn()
+                .mockName('getEmptyParentMethods')
+                .mockReturnValue(parentMethods);
+        });
+
+        it('should call #describeHandler with specific isFdescribe flag set to true', () => {
+            instance.fdescribe(description, callback);
+            expect(instance.getEmptyParentMethods).toHaveBeenCalled();
+            expect(instance.describeHandler).toHaveBeenCalledWith({
+                description,
+                callback,
+                parentMethods,
+                isFDescribe: true,
+            });
+        });
     });
 
     describe('#xdescribe', () => {
@@ -80,6 +102,7 @@ describe('Describe', () => {
             describerArguments = {
                 description,
                 callback,
+                isFDescribe,
             };
 
             instance.store.nextDescriberArguments = [
@@ -113,6 +136,7 @@ describe('Describe', () => {
                     description,
                     callback,
                     parentMethods,
+                    isFDescribe,
                 },
             ]);
             expect(instance.getEmptyParentMethods).toHaveBeenCalled();

@@ -20,6 +20,7 @@ export interface Describer {
     childrenDescribersId: Array<string>;
     testCases: Array<TestCase>;
     context: Context;
+    isFDescribe: boolean;
 }
 
 export interface Describers {
@@ -35,4 +36,5 @@ export interface DescriberArguments {
     description: string;
     callback: Callback;
     parentMethods?: ParentMethods;
+    isFDescribe?: boolean;
 }
