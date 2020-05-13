@@ -10,6 +10,7 @@ describe('Jasmine', () => {
     });
 
     it('should define test API', () => {
+        expect(instance.fdescribe).toBeDefined();
         expect(instance.describe).toBeDefined();
         expect(instance.xdescribe).toBeDefined();
 

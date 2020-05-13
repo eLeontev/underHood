@@ -7,9 +7,21 @@ import {
     ParentMethods,
 } from './models/describe.model';
 import { Store } from './models/store.model';
+import { GetDescriberIdWithPrefix, getDescriberIdWithPrefix } from './utils';
 
 export class Describe implements DescribeCore {
+    private getDescriberIdWithPrefix: GetDescriberIdWithPrefix = getDescriberIdWithPrefix;
+
     constructor(private store: Store) {}
+
+    public fdescribe = (description: string, callback: Callback): void => {
+        this.describeHandler({
+            description,
+            callback,
+            parentMethods: this.getEmptyParentMethods(),
+            isFDescribe: true,
+        });
+    };
 
     public xdescribe = (description: string): void => {
         const { store } = this;
@@ -35,7 +47,7 @@ export class Describe implements DescribeCore {
         describerArguments: DescriberArguments,
         describerId?: string
     ): void {
-        const { description, callback } = describerArguments;
+        const { description, callback, isFDescribe } = describerArguments;
 
         const {
             isDescriberFormingInProgress,
@@ -49,6 +61,7 @@ export class Describe implements DescribeCore {
                     description,
                     callback,
                     parentMethods: this.getEmptyParentMethods(),
+                    isFDescribe,
                 },
             ];
 
@@ -83,10 +96,13 @@ export class Describe implements DescribeCore {
     }
 
     private initDescribe(
-        { description, parentMethods }: DescriberArguments,
+        { description, parentMethods, isFDescribe }: DescriberArguments,
         describerId?: string
     ): string {
-        const id = describerId || uniqueid('root-');
+        const id =
+            describerId ||
+            uniqueid(this.getDescriberIdWithPrefix(isFDescribe, 'root-'));
+
         const describer: Describer = {
             description,
             beforeEachList: [...parentMethods.beforeEachList],
@@ -94,6 +110,7 @@ export class Describe implements DescribeCore {
             testCases: [],
             childrenDescribersId: [],
             context: {},
+            isFDescribe,
         };
 
         const isRootDescriber = !describerId;
@@ -109,8 +126,10 @@ export class Describe implements DescribeCore {
         const parentMethods = this.getParentMethods(describerId);
 
         nextDescriberArguments.forEach(
-            ({ description, callback }: DescriberArguments) => {
-                const childDescriberId = uniqueid('child-');
+            ({ description, callback, isFDescribe }: DescriberArguments) => {
+                const childDescriberId = uniqueid(
+                    this.getDescriberIdWithPrefix(isFDescribe, 'child-')
+                );
 
                 this.addChildDesriberId(describerId, childDescriberId);
                 this.childDescribe(

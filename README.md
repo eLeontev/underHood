@@ -7,7 +7,7 @@ This repo demonstrates core concepts of modern/popular JS libraries
 
 -   express (core principies and imitation their communication on any request)
 -   jasmine/jest(test framefork functionality):
-    -   (x)describe
+    -   (x/f)describe
     -   beforeEach/afterEach
     -   (x/f)it
     -   expect

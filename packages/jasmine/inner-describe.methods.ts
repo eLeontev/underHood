@@ -2,8 +2,11 @@ import { InnerDescribeMethodsCore, Callback } from './models/jasmine.model';
 import { Describer, It } from './models/describe.model';
 import { Store } from './models/store.model';
 import uniqueId from 'lodash.uniqueid';
+import { GetDescriberIdWithPrefix, getDescriberIdWithPrefix } from './utils';
 
 export class InnerDescribeMethods implements InnerDescribeMethodsCore {
+    private getDescriberIdWithPrefix: GetDescriberIdWithPrefix = getDescriberIdWithPrefix;
+
     constructor(private store: Store) {}
 
     public fit = (description: string, callback: Callback): void => {
@@ -33,6 +36,12 @@ export class InnerDescribeMethods implements InnerDescribeMethodsCore {
 
     public it = (description: string, callback: Callback): void => {
         const describer = this.getActiveDescriber();
+
+        if (describer.isFDescribe) {
+            this.fit(description, callback);
+            return;
+        }
+
         describer.testCases = [
             ...describer.testCases,
             {
@@ -66,7 +75,9 @@ export class InnerDescribeMethods implements InnerDescribeMethodsCore {
 
     private registerFDescriber(fDescriber: Describer): void {
         const { store } = this;
-        const fDescriberId = uniqueId('fdescr-');
+        const fDescriberId = uniqueId(
+            this.getDescriberIdWithPrefix(fDescriber.isFDescribe, 'descr-')
+        );
 
         store.describers = {
             ...store.describers,

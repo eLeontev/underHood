@@ -24,6 +24,7 @@ export class Jasmine implements JasmineCore {
         inactiveTestCases: [],
     };
 
+    public fdescribe: DescribeModel;
     public describe: DescribeModel;
     public xdescribe: DescribeModel;
 
@@ -40,6 +41,7 @@ export class Jasmine implements JasmineCore {
 
     constructor() {
         const describeInstance = new Describe(this.store);
+        this.fdescribe = describeInstance.fdescribe;
         this.describe = describeInstance.describe;
         this.xdescribe = describeInstance.xdescribe;
 
