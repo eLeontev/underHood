@@ -6,6 +6,7 @@ export type CallbackList = Array<Callback>;
 
 export type DescribeModel = (description: string, callback: Callback) => void;
 export interface DescribeCore {
+    fdescribe: DescribeModel;
     describe: DescribeModel;
     xdescribe: DescribeModel;
 }
