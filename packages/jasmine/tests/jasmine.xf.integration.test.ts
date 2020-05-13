@@ -127,8 +127,8 @@ describe('test of enabled/disabled/chosen test cases', () => {
         });
     });
 
-    it('fdescr-3: shold return valid structure', () => {
-        expect(getDescriberById(instance, 'fdescr-3')).toEqual({
+    it('descr-3: shold return valid structure', () => {
+        expect(getDescriberById(instance, 'descr-3')).toEqual({
             afterEachList: [],
             beforeEachList: [cb4],
             childrenDescribersId: [],
@@ -146,8 +146,8 @@ describe('test of enabled/disabled/chosen test cases', () => {
         });
     });
 
-    it('fdescr-4: shold return valid structure', () => {
-        expect(getDescriberById(instance, 'fdescr-4')).toEqual({
+    it('descr-4: shold return valid structure', () => {
+        expect(getDescriberById(instance, 'descr-4')).toEqual({
             afterEachList: [],
             beforeEachList: [cb4],
             childrenDescribersId: [],
@@ -165,8 +165,8 @@ describe('test of enabled/disabled/chosen test cases', () => {
         });
     });
 
-    it('fdescr-6: shold return valid structure', () => {
-        expect(getDescriberById(instance, 'fdescr-6')).toEqual({
+    it('descr-6: shold return valid structure', () => {
+        expect(getDescriberById(instance, 'descr-6')).toEqual({
             afterEachList: [],
             beforeEachList: [cb4, cb7],
             childrenDescribersId: [],
@@ -195,9 +195,9 @@ describe('test for forming root describer/fdescriber Ids', () => {
 
     it('should form valid list of rootFDescribersId', () => {
         expect((instance as any).store.fDescribersId).toEqual([
-            'fdescr-3',
-            'fdescr-4',
-            'fdescr-6',
+            'descr-3',
+            'descr-4',
+            'descr-6',
         ]);
     });
 });
