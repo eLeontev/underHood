@@ -114,6 +114,7 @@ describe('InnerDescribeMethods', () => {
                 .fn()
                 .mockName('getActiveDescriber')
                 .mockReturnValue(describer);
+            instance.fit = jest.fn().mockName('fit');
         });
 
         it('should init new test cases with passed description and callback and empty validators to active describer', () => {
@@ -123,6 +124,15 @@ describe('InnerDescribeMethods', () => {
                 existedItStructure,
                 { it: { description, callback }, validators: [] },
             ]);
+        });
+
+        it('should register test case as fit if active describer if called from fdescribe', () => {
+            describer.isFDescribe = true;
+            instance.it(description, callback);
+            expect(instance.getActiveDescriber).toHaveBeenCalled();
+            expect(describer.testCases).toEqual([existedItStructure]);
+
+            expect(instance.fit).toHaveBeenCalledWith(description, callback);
         });
     });
 
@@ -168,11 +178,11 @@ describe('InnerDescribeMethods', () => {
             instance.registerFDescriber(describer);
             expect(instance.store.describers).toEqual({
                 existedDescribers: true,
-                'fdescr-1': describer,
+                'descr-1': describer,
             });
             expect(instance.store.fDescribersId).toEqual([
                 existedFDescriberId,
-                'fdescr-1',
+                'descr-1',
             ]);
         });
     });
