@@ -14,3 +14,12 @@ export const stringifyPassedValue = (passedValue: any): string =>
     isFunction(passedValue)
         ? `function with name: ${passedValue.name}`
         : JSON.stringify(passedValue);
+
+export type GetDescriberIdWithPrefix = (
+    isFDescribe: boolean,
+    prefix: string
+) => string;
+export const getDescriberIdWithPrefix = (
+    isFDescribe: boolean,
+    prefix: string
+): string => (isFDescribe ? `f${prefix}` : prefix);
