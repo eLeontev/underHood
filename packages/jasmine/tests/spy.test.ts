@@ -193,10 +193,8 @@ describe('Spy', () => {
             });
 
             it('should  return result of spy handler function', () => {
-                const handlerResult = 'handlerResult';
-                handler.mockReturnValue(handlerResult);
-                expect(instance.perfromSpyCall(spyMethod, ...args)).toBe(
-                    handlerResult
+                expect(instance.perfromSpyCall(spyMethod, args)).toBe(
+                    spyResult
                 );
             });
         });
