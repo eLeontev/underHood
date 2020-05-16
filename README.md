@@ -16,3 +16,7 @@ This repo demonstrates core concepts of modern/popular JS libraries
     -   toHaveBennCalled/toHaveBennCalledWith
     -   createSpy/spyMethod,
     -   async tests cases
+-   redux: (createStore includes):
+    -   getState
+    -   subscribe
+    -   dispatch
