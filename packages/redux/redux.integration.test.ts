@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createStore } from './redux';
-import { BaseAction, Reducer, ReduxStore } from './redux.model';
+import { InitialAction, Reducer, ReduxStore } from './redux.model';
 
 interface State {
     index: number;
@@ -40,7 +40,7 @@ const setValueTo = (value: number): SetValueTo => ({
 
 const reducer: Reducer<State, Actions> = (
     state: State = initialState,
-    action: Actions | BaseAction
+    action: Actions | InitialAction
 ): State => {
     switch (action.type) {
         case INCREMENT_INDEX: {
@@ -63,7 +63,7 @@ const reducer: Reducer<State, Actions> = (
 };
 
 describe('integration tests', () => {
-    let store: ReduxStore<State, Actions, (state: State) => void>;
+    let store: ReduxStore<State, Actions>;
     let subscriber1: any;
     let subscriber2: any;
 
