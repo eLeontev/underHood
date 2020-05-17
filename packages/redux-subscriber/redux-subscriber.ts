@@ -1,6 +1,13 @@
 import get from 'lodash.get';
 
-import { ReduxSubscriber } from './redux-subscriber.model';
+import {
+    ReduxSubscriber,
+    ListenersDataStore,
+    ListenerTypes,
+    CommonListenerData,
+    CustomListenerData,
+    ActionListenerData,
+} from './redux-subscriber.model';
 import {
     ReduxStore,
     Unsubscriber,
@@ -8,23 +15,14 @@ import {
     BaseAction,
 } from '../redux/redux.model';
 
-export interface ListenerData<Listener> {
-    listener: Listener;
-    actionsToFire: Array<string>;
-}
-
-interface ListenersDataStore<Listener> {
-    [pathToListenValue: string]: Array<ListenerData<Listener>>;
-}
-
 class SubscriberStore<State, Action extends BaseAction>
     implements ReduxSubscriber<State, Action> {
-    private listenersDataStore: ListenersDataStore<Subscriber<State>> = {};
+    private listenersDataStore: ListenersDataStore<Subscriber<State>> = [];
     private customListenerUnsubscriber: Unsubscriber;
     private firedAction: string;
 
     constructor(private store: ReduxStore<State, Action>) {
-        this.activateCustomListenersSubscriber();
+        this.activateListenersSubscriber();
     }
 
     getState(): State {
@@ -42,43 +40,41 @@ class SubscriberStore<State, Action extends BaseAction>
     }
     setCustomListener(
         pathToListenValue: string,
-        listener: Subscriber<State>,
-        actionsToFire: string[] = []
+        listener: Subscriber<State>
     ): Unsubscriber {
-        this.setListenerDataToStore(pathToListenValue, listener, actionsToFire);
-        return (): void => this.unsubscribe(pathToListenValue, listener);
+        this.setListenerDataToStore({
+            pathToListenValue,
+            listener,
+            listenerType: ListenerTypes.customListener,
+        });
+        return (): void => this.unsubscribe(listener);
+    }
+    setActionListener(
+        actionsToFire: Array<string>,
+        listener: Subscriber<State>
+    ): Unsubscriber {
+        this.setListenerDataToStore({
+            actionsToFire,
+            listener,
+            listenerType: ListenerTypes.actionListener,
+        });
+        return (): void => this.unsubscribe(listener);
     }
 
     private setListenerDataToStore(
-        pathToListenValue: string,
-        listener: Subscriber<State>,
-        actionsToFire: string[]
+        listenerData: CommonListenerData<Subscriber<State>>
     ): void {
-        const listenersData = this.listenersDataStore[pathToListenValue];
-        const listenerData: ListenerData<Subscriber<State>> = {
-            actionsToFire,
-            listener,
-        };
-
-        this.listenersDataStore[pathToListenValue] = [
-            ...listenersData,
-            listenerData,
-        ];
+        this.listenersDataStore = [...this.listenersDataStore, listenerData];
     }
 
-    private unsubscribe(
-        pathToListenValue: string,
-        listenerToUnsubscribe: Subscriber<State>
-    ): void {
-        this.listenersDataStore[pathToListenValue] = this.listenersDataStore[
-            pathToListenValue
-        ].filter(
-            ({ listener }: ListenerData<Subscriber<State>>) =>
+    private unsubscribe(listenerToUnsubscribe: Subscriber<State>): void {
+        this.listenersDataStore = this.listenersDataStore.filter(
+            ({ listener }: CommonListenerData<Subscriber<State>>) =>
                 listener !== listenerToUnsubscribe
         );
     }
 
-    private activateCustomListenersSubscriber(): void {
+    private activateListenersSubscriber(): void {
         this.customListenerUnsubscriber = this.store.subscribe(
             this.fireCustomListeners
         );
@@ -87,54 +83,61 @@ class SubscriberStore<State, Action extends BaseAction>
     private fireCustomListeners: Subscriber<State> = (
         newState: State
     ): void => {
+        const state = this.getState();
+
         const firedAction = this.firedAction;
         this.firedAction = null;
 
-        const state = this.getState();
-        Object.keys(this.listenersDataStore)
-            .filter(this.isStateChangedInPath.bind(null, state, newState))
-            .forEach(
-                this.fireCustomListenersForChangedPath.bind(
-                    this,
-                    newState,
-                    firedAction
-                )
+        this.listenersDataStore
+            .filter(
+                this.shouldFireListner.bind(this, state, newState, firedAction)
+            )
+            .forEach(({ listener }: CommonListenerData<Subscriber<State>>) =>
+                listener(newState)
             );
     };
 
-    private isStateChangedInPath(
+    private shouldFireListner(
         state: State,
         newState: State,
-        pathToListenValue: string
+        firedAction: string,
+        listenerData: CommonListenerData<Subscriber<State>>
+    ): boolean {
+        switch (listenerData.listenerType) {
+            case ListenerTypes.customListener: {
+                return this.shouldFireCustomListener(
+                    state,
+                    newState,
+                    listenerData as CustomListenerData<Subscriber<State>>
+                );
+            }
+            case ListenerTypes.actionListener: {
+                return this.shouldFireActionListner(
+                    firedAction,
+                    listenerData as ActionListenerData<Subscriber<State>>
+                );
+            }
+
+            default:
+                return false;
+        }
+    }
+
+    private shouldFireCustomListener(
+        state: State,
+        newState: State,
+        { pathToListenValue }: CustomListenerData<Subscriber<State>>
     ): boolean {
         return (
             get(state, pathToListenValue) !== get(newState, pathToListenValue)
         );
     }
 
-    private fireCustomListenersForChangedPath(
-        state: State,
+    private shouldFireActionListner(
         firedAction: string,
-        pathToListenValue: string
-    ): void {
-        this.listenersDataStore[pathToListenValue]
-            .filter(this.sholdFireListener.bind(null, firedAction))
-            .forEach(this.fireListener.bind(null, state));
-    }
-
-    private sholdFireListener(
-        firedAction: string,
-        { actionsToFire }: ListenerData<Subscriber<State>>
+        { actionsToFire }: ActionListenerData<Subscriber<State>>
     ): boolean {
-        const shouldBeFiredAlways = !actionsToFire.length;
-        return shouldBeFiredAlways || actionsToFire.includes(firedAction);
-    }
-
-    private fireListener(
-        state: State,
-        { listener }: ListenerData<Subscriber<State>>
-    ): void {
-        listener(state);
+        return actionsToFire.includes(firedAction);
     }
 }
 
