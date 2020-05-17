@@ -1,16 +1,22 @@
-export const INIT_STATE = 'INIT_STATE';
-export type BaseAction = {
-    type: typeof INIT_STATE;
-};
+export interface BaseAction {
+    type: string;
+}
 
-export type Reducer<State, Action> = (
+export const INIT_STATE = 'INIT_STATE';
+export interface InitialAction {
+    type: typeof INIT_STATE;
+}
+
+export type Reducer<State, Action extends BaseAction> = (
     state: State,
-    action: Action | BaseAction
+    action: Action | InitialAction
 ) => State;
 export type Unsubscriber = () => void;
 
-export interface ReduxStore<State, Action, Callback extends Function> {
+export type Subscriber<State> = (state: State) => void;
+
+export interface ReduxStore<State, Action extends BaseAction> {
     getState(): State;
-    subscribe(cb: Callback): Unsubscriber;
-    dispatch(action: Action | BaseAction): void;
+    subscribe(cb: Subscriber<State>): Unsubscriber;
+    dispatch(action: Action | InitialAction): void;
 }
