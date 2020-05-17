@@ -1,22 +1,28 @@
-import { ReduxStore, Reducer, Unsubscriber } from './redux.model';
-import { baseAction } from './redux.constant';
+import {
+    ReduxStore,
+    Reducer,
+    Unsubscriber,
+    Subscriber,
+    BaseAction,
+} from './redux.model';
+import { initialAction } from './redux.constant';
 
-export const createStore = <State, Action>(
+export const createStore = <State, Action extends BaseAction>(
     reducer: Reducer<State, Action>
-): ReduxStore<State, Action, (state: State) => void> => {
-    class Store<State, Action, Callback extends Function>
-        implements ReduxStore<State, Action, Callback> {
+): ReduxStore<State, Action> => {
+    class Store<State, Action extends BaseAction>
+        implements ReduxStore<State, Action> {
         private state: State;
-        private subscribers: Array<Callback> = [];
+        private subscribers: Array<Subscriber<State>> = [];
 
         constructor(private reducer: Reducer<State, Action>) {
-            this.state = reducer(undefined, baseAction);
+            this.state = reducer(undefined, initialAction);
         }
 
         getState(): State {
             return this.state;
         }
-        subscribe(cb: Callback): Unsubscriber {
+        subscribe(cb: Subscriber<State>): Unsubscriber {
             this.subscribers = [...this.subscribers, cb];
             return (): void => this.unsubscribe(cb);
         }
@@ -30,19 +36,19 @@ export const createStore = <State, Action>(
         }
 
         private fireSubscribers(state: State): void {
-            this.subscribers.forEach((cb: Callback) => cb(state));
+            this.subscribers.forEach((cb: Subscriber<State>) => cb(state));
         }
 
         private updateState(state: State): void {
             this.state = state;
         }
 
-        private unsubscribe(cb: Callback): void {
+        private unsubscribe(cb: Subscriber<State>): void {
             this.subscribers = this.subscribers.filter(
-                (subscriber: Callback): boolean => subscriber !== cb
+                (subscriber: Subscriber<State>): boolean => subscriber !== cb
             );
         }
     }
 
-    return new Store<State, Action, (state: State) => void>(reducer);
+    return new Store<State, Action>(reducer);
 };

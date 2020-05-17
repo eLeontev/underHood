@@ -1,5 +1,5 @@
-import { BaseAction, INIT_STATE } from './redux.model';
+import { InitialAction, INIT_STATE } from './redux.model';
 
-export const baseAction: BaseAction = {
+export const initialAction: InitialAction = {
     type: INIT_STATE,
 };

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createStore } from './redux';
-import { baseAction } from './redux.constant';
+import { initialAction } from './redux.constant';
 
 describe('Redux', () => {
     let store: any;
@@ -26,7 +26,7 @@ describe('Redux', () => {
 
     it('should set state on init as the result of call the passed reducer', () => {
         expect(store.state).toBe(initialState);
-        expect(reducer).toHaveBeenCalledWith(undefined, baseAction);
+        expect(reducer).toHaveBeenCalledWith(undefined, initialAction);
     });
 
     describe('#getState', () => {
