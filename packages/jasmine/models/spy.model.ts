@@ -1,26 +1,29 @@
-export type ReturnValue = <V>(value: V) => SpyMethod;
-export type CallFake = (cb: Function) => SpyMethod;
-export type CallOrigin = () => SpyMethod;
+export type ReturnValue<A, R> = (value: R) => SpyMethod<A, R>;
+export type CallFake<A, R> = (
+    cb: (...spyArgumnents: Array<A>) => R
+) => SpyMethod<A, R>;
+export type CallOrigin<A, R> = () => SpyMethod<A, R>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type SpyArguments = Array<any>;
-export interface SpyMethod {
-    (...args: SpyArguments): void;
-    returnValue: ReturnValue;
-    callFake: CallFake;
-    callOrigin?: CallOrigin;
-    getSpyProperties(): SpyProperties;
+export type SpyArguments<A> = Array<A>;
+export interface SpyMethod<A, R> {
+    (...spyArgumnents: Array<A>): R;
+    returnValue: ReturnValue<A, R>;
+    callFake: CallFake<A, R>;
+    callOrigin?: CallOrigin<A, R>;
+    getSpyProperties(): SpyProperties<A, R>;
 }
 
 export interface SpyCore {
-    createSpy(spyName: string): SpyMethod;
+    createSpy<SpyArguments, Result>(
+        spyName: string
+    ): SpyMethod<SpyArguments, Result>;
 }
 
-export interface SpyProperties {
-    handler: Function;
+export interface SpyProperties<SpyArguments, Result> {
+    handler(...spyArgumnents: Array<SpyArguments>): Result;
     spyName: string;
     isCalled: boolean;
     countOfCalls: number;
-    args: Array<SpyArguments>;
-    origin?: Function;
+    args: Array<Array<SpyArguments>>;
+    origin?(...spyArgumnents: Array<SpyArguments>): Result;
 }

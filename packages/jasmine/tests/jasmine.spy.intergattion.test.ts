@@ -13,7 +13,7 @@ const args = [1, 2, 3, {}, fn];
 
 let callableSpy: any;
 let uncallableSpy: any;
-let spiedMethod: SpyMethod;
+let spiedMethod: SpyMethod<any, any>;
 
 inst.describe('test', () => {
     inst.it('spy integration tests', () => {
