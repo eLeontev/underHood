@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import isEqual from 'lodash.isequal';
 
 import { ActualResult, ExpectedResult } from './models/matchers.model';
@@ -34,7 +36,10 @@ export class Validators {
     public toHaveBeenCalled: ValidatorMethod = (
         actualResult: ActualResult
     ): boolean => {
-        const { isCalled } = (actualResult as SpyMethod).getSpyProperties();
+        const { isCalled } = (actualResult as SpyMethod<
+            any,
+            ActualResult
+        >).getSpyProperties();
         return isCalled;
     };
 
@@ -42,9 +47,12 @@ export class Validators {
         actualResult: ActualResult,
         ...expectedResults: Array<ExpectedResult>
     ): boolean => {
-        const { args } = (actualResult as SpyMethod).getSpyProperties();
+        const { args } = (actualResult as SpyMethod<
+            any,
+            ActualResult
+        >).getSpyProperties();
 
-        return args.some((args: SpyArguments) =>
+        return args.some((args: SpyArguments<any>) =>
             isEqual(args, expectedResults)
         );
     };

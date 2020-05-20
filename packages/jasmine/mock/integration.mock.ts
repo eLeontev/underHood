@@ -31,8 +31,10 @@ export const getTestInstanceWithMockData = () => {
         initialValueBfeThird = initialValueBfeSecond + 10;
         spyWithMockImplementation = createSpy(
             'spyWithMockImplementation'
-        ).callFake((arrayOfWords: Array<string>) =>
-            arrayOfWords.reduce((resultValue, word) => resultValue + word)
+        ).callFake((arrayOfWords: any) =>
+            arrayOfWords.reduce(
+                (resultValue: any, word: any) => resultValue + word
+            )
         );
     };
 

@@ -53,7 +53,9 @@ describe('Spy', () => {
             instance.spyMethod(context, merthodName);
 
             expect(instance.getNewRegisterSpy).toHaveBeenCalledWith(
-                merthodName
+                merthodName,
+                [],
+                undefined
             );
             expect(instance.setOrigin).toHaveBeenCalledWith(
                 spy,
@@ -76,7 +78,11 @@ describe('Spy', () => {
 
         it('should return new created spy', () => {
             expect(instance.createSpy(spyName)).toBe(spy);
-            expect(instance.getNewRegisterSpy).toHaveBeenCalledWith(spyName);
+            expect(instance.getNewRegisterSpy).toHaveBeenCalledWith(
+                spyName,
+                [],
+                undefined
+            );
         });
     });
 
