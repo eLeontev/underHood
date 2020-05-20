@@ -6,7 +6,6 @@ import {
     SpyProperties,
     CallFake,
     ReturnValue,
-    SpyArguments,
     CallOrigin,
 } from './models/spy.model';
 
