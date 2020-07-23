@@ -103,9 +103,12 @@ dist
 # TernJS port file
 .tern-port
 
-# vscode 
+# vscode
 .vscode
 launch.json
+
+# idea
+.idea
 
 # ts
 bundle
